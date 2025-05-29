@@ -65,6 +65,7 @@ public class TrainSignal
     public bool HasCode(string code) => codes.Contains(code);
     public bool HasMatchingCode(string regex) => codes.FirstOrDefault((s) => { return Regex.IsMatch(s, regex); }) != null;
     public string? FindCode(string regex) => codes.FirstOrDefault((s) => { return Regex.IsMatch(s, regex); });
+    public object? FindCodeGetPayload(string regex) => payloads[codes.IndexOf(codes.FirstOrDefault((s) => { return Regex.IsMatch(s, regex); }))];
     public string[] FindMatchingCodes(string regex) => codes.Where(s => Regex.IsMatch(s, regex)).ToArray();
     public string[] FindCodeAndGetGroups(string regex)
     {
