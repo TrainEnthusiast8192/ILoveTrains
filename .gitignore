@@ -1,0 +1,11 @@
+.editorconfig
+**/bin
+**/obj
+**/.vs
+**.sln
+**.slnLaunch
+**.user
+
+# Will be slowly readded
+**/TrainExplorer
+**/TrainTester
