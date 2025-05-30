@@ -6,7 +6,17 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     public override bool IsForking => false;
     public override bool IsOrphanNode => false;
 
-    public T? value;
+    protected T? value;
+    public T? GetValue()
+    {
+        return value;
+    }
+    public T? SetValue(T? newValue)
+    {
+        T? ret = value;
+        value = newValue;
+        return ret;
+    }
 
     protected AbstractTrainNode? previous;
     protected AbstractTrainNode? next;
@@ -41,7 +51,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         this.train = null;
     }
 
-    public override AbstractTrainNode Clone()
+    public override ValueTrainNode<T> Clone()
     {
         if (value is ICloneable c && value is not AbstractTrainNode)
         {

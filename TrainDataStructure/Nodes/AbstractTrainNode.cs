@@ -1,6 +1,7 @@
 ﻿namespace TrainDataStructure.Nodes;
-public abstract class AbstractTrainNode : IComparable
+public abstract class AbstractTrainNode : IComparable, ICloneable
 {
+    protected readonly Guid INTERNAL_ID = Guid.NewGuid();
     protected static void NodeEventsConstructor() { }
     public delegate void NodeEvents();
     public NodeEvents OnAdded = NodeEventsConstructor;
@@ -30,6 +31,7 @@ public abstract class AbstractTrainNode : IComparable
     public abstract override string ToString();
     public abstract override int GetHashCode();
     public abstract AbstractTrainNode Clone();
+    object ICloneable.Clone() { return Clone(); }
 
     public abstract AbstractTrainNode? GetNext();
     public abstract AbstractTrainNode? GetPrevious();

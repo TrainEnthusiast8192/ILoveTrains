@@ -1,13 +1,67 @@
-﻿namespace TrainDataStructure.TrainCollections;
-
-public class Train<T> : ITypedTrainCollection<T> where T : IComparable
+﻿
+namespace TrainDataStructure.TrainCollections;
+public class Train<T> : ITypedTrainCollection<T>, IComparable, ICloneable, IEnumerable<AbstractTrainNode> where T : IComparable
 {
     protected AbstractTrainNode? first;
     protected int count;
-    
+    public bool EnforcesTypeSafety() => false;
+    public int GetTotalCount() => count;
+    public AbstractTrainNode? GetFirst() => first;
+
+    public Train()
+    {
+
+    }
+    public Train(params AbstractTrainNode?[] initNodes)
+    {
+        foreach (AbstractTrainNode? n in initNodes)
+        {
+            if (n is not null) { Add(n); }
+        }
+    }
+    public Train(params T?[] initNodes)
+    {
+        foreach (T? val in initNodes)
+        {
+            Add(val);
+        }
+    }
+
+    public IEnumerator<AbstractTrainNode> GetEnumerator()
+    {
+        AbstractTrainNode? curr = first;
+
+        while (curr is not null)
+        {
+            yield return curr;
+            curr = curr.GetNext();
+        }
+
+        yield break;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+
+    object ICloneable.Clone()
+    {
+        return Clone();
+    }
+    public Train<T> Clone()
+    {
+        return new Train<T>(first);
+    }
+    public int CompareTo(object? obj)
+    {
+        return obj is Train<T> other ? other.GetFirst()?.CompareTo(GetFirst()) ?? 1 : 1;
+    }
+
     public bool Add(T? value)
     {
-        return Add(new ValueTrainNode<T>(value));
+        return Add(new ValueTrainNode<T>((T?)value));
     }
 
     public bool Add(AbstractTrainNode node)
@@ -15,7 +69,6 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         if (first is null)
         {
             first = node;
-            first.ReLink(null);
             first.ReParent(null);
             first.ReTrain(this);
 
@@ -49,8 +102,6 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         return first?.RawCollapse(new HashSet<AbstractTrainNode>()) ?? [];
     }
 
-    public bool EnforcesTypeSafety() => false;
-
     public int GetBranchLength()
     {
         int counter = 0;
@@ -62,9 +113,6 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
 
         return counter;
     }
-
-    public AbstractTrainNode? GetFirst() => first;
-
 
     public AbstractTrainNode GetNodeAt(int index)
     {
@@ -103,14 +151,12 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         return ret;
     }
 
-    public int GetTotalCount() => count;
-
     public List<string> PrintBranch(bool printToConsole = true)
     {
         List<string> ret = new List<string>();
         foreach (AbstractTrainNode n in BranchCollapse())
         {
-            string? ns = n.ToString();
+            string ns = n.ToString();
             if (printToConsole) { Console.WriteLine(ns); }
             ret.Add(ns);
         }
@@ -123,9 +169,33 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         List<string> ret = new List<string>();
         foreach (AbstractTrainNode n in Collapse())
         {
-            string? ns = n.ToString();
+            string ns = n.ToString();
             if (printToConsole) { Console.WriteLine(ns); }
             ret.Add(ns);
+        }
+
+        return ret;
+    }
+    public List<string> PrintTrainWithIndent(bool printToConsole = true, int indentSpaceAmount = 4)
+    {
+        List<string> ret = new List<string>();
+        int currentIndentation = 0;
+
+        foreach (AbstractTrainNode n in Collapse())
+        {
+            bool IsFinalMarker = n is MarkerTrainNode m && m.IsEndOfFork;
+            bool IsBranchMarker = n is MarkerTrainNode l && l.IsEndOfBranch;
+
+            if (IsBranchMarker) { currentIndentation--; }
+            if (IsFinalMarker) { currentIndentation--; }
+
+            string indent = String.Concat(Enumerable.Repeat(" ", currentIndentation * indentSpaceAmount));
+            string retS = indent + n.ToString();
+            if (printToConsole) { Console.WriteLine(retS); }
+            ret.Add(retS);
+
+            if (IsBranchMarker) { currentIndentation++; }
+            if (n.IsForking) { currentIndentation++; }
         }
 
         return ret;
@@ -136,7 +206,7 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         List<string> ret = new List<string>();
         foreach (AbstractTrainNode n in RawBranchCollapse())
         {
-            string? ns = n.ToString();
+            string ns = n.ToString();
             if (printToConsole) { Console.WriteLine(ns); }
             ret.Add(ns);
         }
@@ -149,7 +219,7 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         List<string> ret = new List<string>();
         foreach (AbstractTrainNode n in RawCollapse())
         {
-            string? ns = n.ToString();
+            string ns = n.ToString();
             if (printToConsole) { Console.WriteLine(ns); }
             ret.Add(ns);
         }
@@ -188,21 +258,10 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
 
     public bool ReplaceAt(int index, T? newValue)
     {
-        AbstractTrainNode? current = first;
-        ValueTrainNode<T> compNode = new ValueTrainNode<T>(newValue);
-
-        int counter = 0;
-        while (current is not null && counter <= index)
+        AbstractTrainNode? node = GetNodeAt(index);
+        if (node is ValueTrainNode<T> vnode)
         {
-            if (current.IsValueNode && current.EquivalentTo(compNode))
-            {
-                ((ValueTrainNode<T>)current).value = newValue;
-                current.OnReplaced();
-                return true;
-            }
-
-            current = current.GetNext();
-            counter++;
+            vnode.SetValue(newValue);
         }
 
         return false;
@@ -317,7 +376,7 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         if (node.IsValueNode)
         {
             var vnode = (ValueTrainNode<T>)node;
-            return vnode.value;
+            return vnode.GetValue();
         }
 
         return default;
@@ -353,7 +412,7 @@ public class Train<T> : ITypedTrainCollection<T> where T : IComparable
         if (node.IsValueNode)
         {
             var vnode = (ValueTrainNode<T>)node;
-            vnode.value = value;
+            vnode.SetValue(value);
         }
     }
     protected void _setValue(T? value, Index index, params TrainSignal[] signals)

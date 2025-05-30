@@ -2,27 +2,46 @@
 public class MarkerTrainNode : OrphanTrainNode
 {
     protected string message;
+    protected enum SpecialMarkers { none, branch_end, fork_end, loop };
+    protected readonly SpecialMarkers markerType = SpecialMarkers.none;
+    public bool IsSpecialMarker => markerType != SpecialMarkers.none;
+    public bool IsEndOfBranch => markerType == SpecialMarkers.branch_end;
+    public bool IsEndOfFork => markerType == SpecialMarkers.fork_end;
+    public bool IsStartOfLoop => markerType == SpecialMarkers.loop;
     public MarkerTrainNode(string message) { this.message = message; }
     public MarkerTrainNode() { this.message = ""; }
+    protected MarkerTrainNode(string message, SpecialMarkers markerType) { this.message = message; this.markerType = markerType; }
 
     public static class Standards
     {
-        //public static MarkerTrainNode EndOfBranch(int id, bool isLeft)
-        //{
-        //    return isLeft ?
-        //            new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": LEFT ; ID({id})") :
-        //            new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": RIGHT ; ID({id})");
-        //}
-        //public static MarkerTrainNode EndOfBranch(SwitchTrainNode node)
-        //{
-        //    return node.ForkLeft ?
-        //            new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": LEFT ; ID({node.GetId()})") :
-        //            new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": RIGHT ; ID({node.GetId()})");
-        //}
+        public static MarkerTrainNode EndOfBranch(int id, bool isLeft)
+        {
+            return isLeft ?
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": LEFT ; ID({id})", SpecialMarkers.branch_end) :
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": RIGHT ; ID({id})", SpecialMarkers.branch_end);
+        }
+        public static MarkerTrainNode EndOfBranch(SwitchTrainNode node)
+        {
+            return node.ForkLeft ?
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": LEFT ; ID({node.GetID()})", SpecialMarkers.branch_end) :
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": RIGHT ; ID({node.GetID()})", SpecialMarkers.branch_end);
+        }
+        public static MarkerTrainNode EndOfFork(int id, bool isLeft)
+        {
+            return isLeft ?
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": LEFT ; ID({id})", SpecialMarkers.fork_end) :
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": RIGHT ; ID({id})", SpecialMarkers.fork_end);
+        }
+        public static MarkerTrainNode EndOfFork(SwitchTrainNode node)
+        {
+            return node.ForkLeft ?
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": LEFT ; ID({node.GetID()})", SpecialMarkers.fork_end) :
+                    new MarkerTrainNode(SwitchTrainNode.BRANCH_END + $": RIGHT ; ID({node.GetID()})", SpecialMarkers.fork_end);
+        }
 
         public static MarkerTrainNode LoopingStructure(AbstractTrainNode? finalMemberBeforeLoop)
         {
-            return new MarkerTrainNode($"LOOP_START_AHEAD : ({finalMemberBeforeLoop?.ToString() ?? ""}) to ({finalMemberBeforeLoop?.GetNext()?.ToString() ?? ""})");
+            return new MarkerTrainNode($"LOOP_START_AHEAD : ({finalMemberBeforeLoop?.ToString() ?? ""}) to ({finalMemberBeforeLoop?.GetNext()?.ToString() ?? ""})", SpecialMarkers.loop);
         }
 
         //public static MarkerTrainNode EndOfGraphBranch(int id, int branch)
