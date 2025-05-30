@@ -9,7 +9,8 @@ public class Train<T> : ITypedTrainCollection<T>, IComparable, ICloneable, IEnum
 
     public Train()
     {
-
+        first = null;
+        count = 0;
     }
     public Train(params AbstractTrainNode?[] initNodes)
     {
