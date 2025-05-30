@@ -1,5 +1,4 @@
-﻿
-namespace TrainDataStructure.TrainCollections;
+﻿namespace TrainDataStructure.TrainCollections;
 public class Train<T> : ITypedTrainCollection<T>, IComparable, ICloneable, IEnumerable<AbstractTrainNode> where T : IComparable
 {
     protected AbstractTrainNode? first;
