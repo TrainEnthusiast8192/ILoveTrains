@@ -51,6 +51,16 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
             Add(val);
         }
     }
+    public Train(params object?[] initValuesAndNodes)
+    {
+        foreach (object? n in initValuesAndNodes)
+        {
+            if (n is T value) { Add(value); }
+            else if (n is AbstractTrainNode node) { Add(node); }
+            else if (n is IComparable comp) { AddExternal(comp); }
+            else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
+        }
+    }
 
     public override IEnumerator<AbstractTrainNode> GetEnumerator()
     {
