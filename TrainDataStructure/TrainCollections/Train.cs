@@ -315,10 +315,30 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
             count--;
 
             cache.IsPermanent = false;
+
+            DeCache(node);
         }
         return ret;
     }
-
+    protected bool DeCache(AbstractTrainNode node)
+    {
+        bool ret = false;
+        int finalCacheCnt = cache.AddedNodes.Count;
+        for (int i = 0; i < finalCacheCnt; i++)
+        {
+            AbstractTrainNode n = cache.AddedNodes.Dequeue();
+            if (n.Equals(node))
+            {
+                i++;
+                ret = true;
+            }
+            else
+            {
+                cache.AddedNodes.Enqueue(n);
+            }
+        }
+        return ret;
+    }
 
     public override bool RemoveAt(int index) => Remove(GetNodeAt(index));
     public override bool RemoveAt(Index index) => Remove(GetNodeAt(index));
@@ -569,6 +589,32 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         {
             ret |= Signal(s);
         }
+        return ret;
+    }
+
+    public bool AddStructure(PreBuiltTrainStructure structure)
+    {
+        cache.AddedNodes.Enqueue(structure); // Enqueue the structure to mark the next "structure.count" nodes to be from the structure
+        bool ret = Add(structure.first); // Add the node to the end
+        if (ret)
+        {
+            count += structure.count - 1; // Add the amount of nodes, minus the one we already added
+
+            // Add each node to the cache
+            structure.first.RawCollapse(new HashSet<AbstractTrainNode>()).ForEach(o => cache.AddedNodes.Enqueue(o));
+
+            // Update cache
+            cache.IsLinear &= !structure.hasFork;
+            cache.IsTypeSafe &= !structure.hasExternalType;
+
+            // Update structure metadata
+            structure.train = this;
+        }
+        else
+        {
+            cache.AddedNodes.Dequeue(); // Remove the structure if adding of the first node failed
+        }
+
         return ret;
     }
 
