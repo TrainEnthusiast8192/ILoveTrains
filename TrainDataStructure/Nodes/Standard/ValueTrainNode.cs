@@ -168,6 +168,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         {
             return TrainOperations.LOOPED;
         }
+        if (signal.IsCancelled)
+        {
+            return TrainOperations.CANCELLED;
+        }
 
         return TrainOperations.PASS;
     }

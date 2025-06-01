@@ -238,6 +238,10 @@ public class SwitchTrainNode : AbstractTrainNode, IIdentifiableTrainNode, ITrain
         {
             return TrainOperations.LOOPED;
         }
+        if (signal.IsCancelled)
+        {
+            return TrainOperations.CANCELLED;
+        }
 
         string[] match = signal.FindCodeAndGetGroups(GetSignalTemplate());
         if (match.Length != 2) { return TrainOperations.PASS; }
