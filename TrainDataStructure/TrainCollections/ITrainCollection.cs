@@ -1,9 +1,11 @@
 ﻿namespace TrainDataStructure.TrainCollections;
-public interface ITrainCollection
+public interface ITrainCollection : IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
 {
+    public abstract Guid GetID();
     public abstract AbstractTrainNode? GetFirst();
     public abstract int GetTotalCount();
     public abstract int GetBranchLength();
+    public abstract bool IsCached { get; }
 
     public abstract List<AbstractTrainNode> Collapse();
     public abstract List<AbstractTrainNode> BranchCollapse();
@@ -20,39 +22,16 @@ public interface ITrainCollection
 
     public abstract List<AbstractTrainNode> GetNodesAt(Range range);
 
-    public abstract bool Add(AbstractTrainNode node);
-    public abstract bool Remove(AbstractTrainNode node);
+    new public abstract bool Add(AbstractTrainNode node); void ICollection<AbstractTrainNode>.Add(AbstractTrainNode item) => Add(item);
     public abstract bool Signal(TrainSignal signal);
     public abstract bool Signal(params TrainSignal[] signals);
 
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE]
-    {
-        get;
-        set;
-    }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE]
-    {
-        get;
-        set;
-    }
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE]
-    {
-        get;
-        set;
-    }
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess]
-    {
-        get;
-        set;
-    }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess]
-    {
-        get;
-        set;
-    }
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess]
-    {
-        get;
-        set;
-    }
+    public abstract void CopyTo(AbstractTrainNode[] array, Index arrayIndex);
+
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
 }
