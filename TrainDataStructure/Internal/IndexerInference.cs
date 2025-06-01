@@ -1,7 +1,7 @@
 ﻿namespace TrainDataStructure.Internal;
 public static class IndexerInference
 {
-    public static readonly Enum[] Strategies = [DIRECT, NODE];
+    public static readonly List<Enum> Strategies = [DIRECT, NODE];
     public enum Direct { direct };
     public const Direct DIRECT = Direct.direct;
     public enum Node { node };
