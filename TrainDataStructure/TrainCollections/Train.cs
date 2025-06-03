@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.TrainCollections;
-public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnumerable<AbstractTrainNode> where T : IComparable
+public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList<T?>, ICollection<T?>, IEnumerable<T?> where T : IComparable
 {
     protected AbstractTrainNode? first;
     protected int count;
@@ -88,6 +88,41 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
         yield break;
     }
+
+    public override IEnumerator<T?> GetValues()
+    {
+        AbstractTrainNode? curr = first;
+
+        while (curr is not null)
+        {
+            if (curr is ValueTrainNode<T> vnode)
+            {
+                yield return vnode.GetValue();
+            }
+            curr = curr.GetNext();
+        }
+
+        yield break;
+    }
+    public override IEnumerator<T?> GetValues(params TrainSignal[] signalsToSendBeforeStartingEnumeration)
+    {
+        Signal(signalsToSendBeforeStartingEnumeration);
+
+        AbstractTrainNode? curr = first;
+
+        while (curr is not null)
+        {
+            if (curr is ValueTrainNode<T> vnode)
+            {
+                yield return vnode.GetValue();
+            }
+            curr = curr.GetNext();
+        }
+
+        yield break;
+    }
+
+    IEnumerator<T?> IEnumerable<T?>.GetEnumerator() => GetValues();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -346,27 +381,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
     public override bool Insert(int index, T? value)
     {
-        AbstractTrainNode prev = GetNodeAt(index - 1);
-
-        AbstractTrainNode? next = prev.ReLink(null);
-
-        ValueTrainNode<T> newNode = new ValueTrainNode<T>(value);
-
-        bool ret = prev.AddNode(newNode, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS);
-
-        if (ret)
-        {
-            next?.ReParent(newNode);
-        }
-        else
-        {
-            prev.ReLink(next);
-        }
-
-        return ret;
+        return Insert(index, new ValueTrainNode<T>(value));
     }
 
-    public override bool Insert(Index index, T? value) => Insert(index.GetOffset(GetBranchLength()) - 1, value);
+    public override bool Insert(Index index, T? value) => Insert(index.GetOffset(GetBranchLength()), value);
 
     public override bool Insert(Range range, params T?[] value)
     {
@@ -385,24 +403,52 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         return ret;
     }
 
-    public override bool Insert(int index, AbstractTrainNode value)
+    public override bool Insert<M>(int index, M? value) where M : default
     {
-        AbstractTrainNode prev = GetNodeAt(index - 1);
-        AbstractTrainNode? next = prev.ReLink(null);
-        bool ret = prev.AddNode(value, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS);
-        if (ret)
+        return Insert(index, node: new ValueTrainNode<M>(value));
+    }
+
+    public override bool Insert<M>(Index index, M? value) where M : default => Insert(index.GetOffset(GetBranchLength()), value);
+
+    public override bool Insert<M>(Range range, params M?[] value) where M : default
+    {
+        int cnt = GetBranchLength();
+        int start = range.Start.GetOffset(cnt);
+        int end = range.End.GetOffset(cnt);
+
+        int arrCnt = 0;
+        bool ret = true;
+        for (int i = start; i < end; i++)
         {
-            next?.ReParent(value);
-        }
-        else
-        {
-            prev.ReLink(next);
+            ret &= Insert(i, value[arrCnt]);
+            arrCnt++;
         }
 
         return ret;
     }
 
-    public override bool Insert(Index index, AbstractTrainNode node) => Insert(index.GetOffset(GetBranchLength()) - 1, node);
+    public override bool Insert(int index, AbstractTrainNode node)
+    {
+        return index == 0 ? _insertAtHead(node) 
+            : first?.InsertNode(node, index, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) 
+            ?? throw new IndexOutOfRangeException($"Index {index} was non-zero for insertion on empty train");
+    }
+    protected bool _insertAtHead(AbstractTrainNode node)
+    {
+        first?.ReParent(node);
+
+        node.ReLink(first);
+        node.ReParent(null);
+        node.ReTrain(this);
+        first = node;
+
+        node.OnInserted();
+        node.OnAddedAsFirst();
+
+        return true;
+    }
+
+    public override bool Insert(Index index, AbstractTrainNode node) => Insert(index.GetOffset(GetBranchLength()), node);
 
     public override bool Insert(Range range, AbstractTrainNode[] nodes)
     {
@@ -516,6 +562,32 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     }
     public override void CopyTo(AbstractTrainNode[] array) => CopyTo(array, 0);
     public override void CopyTo(AbstractTrainNode[] array, Index arrayIndex) => CopyTo(array, arrayIndex.GetOffset(GetBranchLength()));
+
+    public void CopyTo(T?[] array, int arrayIndex)
+    {
+        List<AbstractTrainNode> branch = RawBranchCollapse();
+
+        int cnt = array.Length;
+        if (arrayIndex >= cnt || arrayIndex < 0) { throw new IndexOutOfRangeException($"Index {arrayIndex} was outside the bounds of the given array"); }
+        if (cnt - arrayIndex < branch.Count) { throw new ArgumentException($"The number of elements in the source {branch.Count} is greater than the available space from {arrayIndex} to the end of the destination array."); }
+
+        int listCounter = 0;
+        for (int i = arrayIndex; i < cnt; i++)
+        {
+            if (branch[listCounter] is ValueTrainNode<T> vnode)
+            {
+                array[i] = vnode.GetValue();
+            }
+            else
+            {
+                i--;
+            }
+
+            listCounter++;
+        }
+    }
+    public void CopyTo(T?[] array) => CopyTo(array, 0);
+    public void CopyTo(T?[] array, Index arrayIndex) => CopyTo(array, arrayIndex.GetOffset(GetBranchLength()));
 
     public override bool ReplaceAt(int index, T? newValue)
     {
@@ -697,4 +769,12 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
             arrcnt++;
         }
     }
+
+    void IList<T?>.Insert(int index, T? item) => Insert(index, item);
+
+    void IList<T?>.RemoveAt(int index) => RemoveAt(index);
+
+    void ICollection<T?>.Add(T? item) => Add(item);
+
+    void ICollection<T?>.Clear() => Clear();
 }

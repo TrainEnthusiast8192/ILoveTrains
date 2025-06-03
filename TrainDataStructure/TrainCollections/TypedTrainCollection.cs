@@ -1,10 +1,16 @@
 ﻿namespace TrainDataStructure.TrainCollections;
-public abstract class TypedTrainCollection<T> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
+public abstract class TypedTrainCollection<T> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>, IDisposable
 {
     // Constructors
     public TypedTrainCollection() { }
     public TypedTrainCollection(params AbstractTrainNode?[] initNodes) { }
     public TypedTrainCollection(params T?[] initValues) { }
+    ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
+    public void Dispose()
+    {
+        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        GC.SuppressFinalize(this);
+    }
 
     // Standard information
     public abstract int Count { get; }
@@ -27,12 +33,15 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     // Insert value
     public abstract bool Insert(int index, T? value);
     public abstract bool Insert(Index index, T? value);
-    public abstract bool Insert(Range range, params T?[] value);
+    public abstract bool Insert(Range range, params T?[] values);
+    public abstract bool Insert<M>(int index, M? value);
+    public abstract bool Insert<M>(Index index, M? value);
+    public abstract bool Insert<M>(Range range, params M?[] values);
 
     // Insert node
-    public abstract bool Insert(int index, AbstractTrainNode value);
-    public abstract bool Insert(Index index, AbstractTrainNode value);
-    public abstract bool Insert(Range range, AbstractTrainNode[] value);
+    public abstract bool Insert(int index, AbstractTrainNode node);
+    public abstract bool Insert(Index index, AbstractTrainNode node);
+    public abstract bool Insert(Range range, AbstractTrainNode[] nodes);
 
     // Add external value
     public bool AddExternal<M>(M? value) { return !EnforcesTypeSafety && HandleAddExternal<M>(value); }
@@ -41,7 +50,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     // Remove
     public abstract bool Remove(T? value);
     public abstract bool Remove(AbstractTrainNode node);
-    public abstract bool Remove(params AbstractTrainNode[] node);
+    public abstract bool Remove(params AbstractTrainNode[] nodes);
     public abstract bool RemoveAt(int index);
     public abstract bool RemoveAt(Index index);
     public abstract bool RemoveRange(Range range);
@@ -69,12 +78,12 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract List<string> RawPrintBranch(bool printToConsole = true);
 
     // Node finding
-    public abstract bool Contains(AbstractTrainNode item);
-    public abstract int IndexOf(AbstractTrainNode item);
-    public abstract bool Contains(T item);
-    public abstract int IndexOf(T item);
-    public abstract bool Contains<M>(M? item);
-    public abstract int IndexOf<M>(M? item);
+    public abstract bool Contains(AbstractTrainNode node);
+    public abstract int IndexOf(AbstractTrainNode node);
+    public abstract bool Contains(T? value);
+    public abstract int IndexOf(T? value);
+    public abstract bool Contains<M>(M? value);
+    public abstract int IndexOf<M>(M? value);
     public abstract AbstractTrainNode? GetNodeAt(int index);
     public abstract AbstractTrainNode? GetNodeAt(Index index);
     public abstract List<AbstractTrainNode> GetNodesAt(Range range);
@@ -86,6 +95,9 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
 
     // Collapse to lazy enumerator
     public abstract IEnumerator<AbstractTrainNode> GetEnumerator();
+    public abstract IEnumerator<AbstractTrainNode> GetEnumerator(params TrainSignal[] signalsToSendBeforeStartingEnumeration);
+    public abstract IEnumerator<T?> GetValues();
+    public abstract IEnumerator<T?> GetValues(params TrainSignal[] signalsToSendBeforeStartingEnumeration);
 
     // Recast to another type
     public abstract TypedTrainCollection<M> Cast<M>();
@@ -131,12 +143,18 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
+public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>, IDisposable
 {
     // Constructors
     public TypedTrainCollection() { }
     public TypedTrainCollection(params AbstractTrainNode?[] initNodes) { }
     public TypedTrainCollection(params T?[] initValues) { }
+    ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
+    public void Dispose()
+    {
+        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        GC.SuppressFinalize(this);
+    }
 
     // Standard information
     public abstract int Count { get; }
@@ -162,12 +180,17 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     // Insert value
     public abstract bool Insert(int index, T? value);
     public abstract bool Insert(Index index, T? value);
-    public abstract bool Insert(Range range, params T?[] value);
+    public abstract bool Insert(Range range, params T?[] values);
+
+    // Insert External
+    public abstract bool Insert<M>(int index, M? value) where M : IComparable;
+    public abstract bool Insert<M>(Index index, M? value) where M : IComparable;
+    public abstract bool Insert<M>(Range range, params M?[] values) where M : IComparable;
 
     // Insert node
-    public abstract bool Insert(int index, AbstractTrainNode value);
-    public abstract bool Insert(Index index, AbstractTrainNode value);
-    public abstract bool Insert(Range range, AbstractTrainNode[] value);
+    public abstract bool Insert(int index, AbstractTrainNode node);
+    public abstract bool Insert(Index index, AbstractTrainNode node);
+    public abstract bool Insert(Range range, AbstractTrainNode[] nodes);
 
     // Add external value
     public bool AddExternal<M>(M? value) where M : MExternalTypeConstraint { return !EnforcesTypeSafety && HandleAddExternal<M>(value); }
@@ -176,7 +199,7 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     // Remove
     public abstract bool Remove(T? value);
     public abstract bool Remove(AbstractTrainNode node);
-    public abstract bool Remove(params AbstractTrainNode[] node);
+    public abstract bool Remove(params AbstractTrainNode[] nodes);
     public abstract bool RemoveAt(int index);
     public abstract bool RemoveAt(Index index);
     public abstract bool RemoveRange(Range range);
@@ -204,12 +227,12 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public abstract List<string> RawPrintBranch(bool printToConsole = true);
 
     // Node finding
-    public abstract bool Contains(AbstractTrainNode item);
-    public abstract int IndexOf(AbstractTrainNode item);
-    public abstract bool Contains(T? item);
-    public abstract int IndexOf(T? item);
-    public abstract bool Contains<M>(M? item) where M : MExternalTypeConstraint;
-    public abstract int IndexOf<M>(M? item) where M : MExternalTypeConstraint;
+    public abstract bool Contains(AbstractTrainNode node);
+    public abstract int IndexOf(AbstractTrainNode node);
+    public abstract bool Contains(T? value);
+    public abstract int IndexOf(T? value);
+    public abstract bool Contains<M>(M? value) where M : MExternalTypeConstraint;
+    public abstract int IndexOf<M>(M? value) where M : MExternalTypeConstraint;
     public abstract AbstractTrainNode? GetNodeAt(int index);
     public abstract AbstractTrainNode? GetNodeAt(Index index);
     public abstract List<AbstractTrainNode> GetNodesAt(Range range);
@@ -222,6 +245,8 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     // Collapse to lazy enumerator
     public abstract IEnumerator<AbstractTrainNode> GetEnumerator();
     public abstract IEnumerator<AbstractTrainNode> GetEnumerator(params TrainSignal[] signalsToSendBeforeStartingEnumeration);
+    public abstract IEnumerator<T?> GetValues();
+    public abstract IEnumerator<T?> GetValues(params TrainSignal[] signalsToSendBeforeStartingEnumeration);
 
     // Recast to another type
     public abstract TypedTrainCollection<M, MExternalTypeConstraint> Cast<M>() where M : MExternalTypeConstraint;
