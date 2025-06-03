@@ -229,9 +229,4 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     {
         return [this, .. GetNext()?.RawBranchCollapse(loopedOver) ?? []];
     }
-
-    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.Nodes.Standard;
-public class SwitchTrainNode : AbstractTrainNode, IIdentifiableTrainNode, ITrainSignalReceiver
+public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObject, ITrainSignalReceiver
 {
     public const string BRANCH_END = "END_OF_BRANCH";
 
@@ -41,7 +41,7 @@ public class SwitchTrainNode : AbstractTrainNode, IIdentifiableTrainNode, ITrain
 
     public SwitchTrainNode()
     {
-        this.id = IIdentifiableTrainNode.GetNewID();
+        this.id = IUniquelyIdentifiableTrainObject.GetNewID();
         this.previous = null;
         this.next = null;
         this.train = null;
@@ -52,10 +52,11 @@ public class SwitchTrainNode : AbstractTrainNode, IIdentifiableTrainNode, ITrain
         this.previous = null;
         this.next = null;
         this.train = null;
+        IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
     }
     public SwitchTrainNode(AbstractTrainNode? previous, AbstractTrainNode? next, ITrainCollection? train)
     {
-        this.id = IIdentifiableTrainNode.GetNewID();
+        this.id = IUniquelyIdentifiableTrainObject.GetNewID();
         this.previous = previous;
         this.next = next;
         this.train = train;
@@ -66,6 +67,12 @@ public class SwitchTrainNode : AbstractTrainNode, IIdentifiableTrainNode, ITrain
         this.previous = previous;
         this.next = next;
         this.train = train;
+        IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
+    }
+
+    ~SwitchTrainNode()
+    {
+        IUniquelyIdentifiableTrainObject.ReturnID(this);
     }
 
     public override int CompareTo(object? obj)
