@@ -1,5 +1,4 @@
 ﻿namespace TrainDataStructure.Nodes.Interfacing;
-
 public interface IUniquelyIdentifiableTrainObject
 {
     public abstract int GetID();
