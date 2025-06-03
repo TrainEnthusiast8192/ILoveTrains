@@ -59,6 +59,11 @@ public abstract class OrphanTrainNode : AbstractTrainNode
         return TrainOperations.CUT_EARLY;
     }
 
+    protected sealed override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    {
+        return TrainOperations.CUT_EARLY;
+    }
+
     protected sealed override TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
     {
         return TrainOperations.CUT_EARLY;

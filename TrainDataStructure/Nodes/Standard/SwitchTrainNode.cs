@@ -210,6 +210,64 @@ public class SwitchTrainNode : AbstractTrainNode, IIdentifiableTrainNode, ITrain
         }
     }
 
+    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    {
+        if (loopedOver.Contains(this))
+        {
+            return TrainOperations.LOOPED;
+        }
+
+        if (skipsRemainingIncludingCurrent != 0)
+        {
+            return TrainOperations.PASS;
+        }
+
+        if (ForkLeft)
+        {
+            if (left is null)
+            {
+                left = node;
+                node.ReParent(this);
+                node.ReTrain(train);
+
+                return TrainOperations.SUCCESS;
+            }
+            else
+            {
+                left.ReParent(node);
+
+                node.ReParent(this);
+                node.ReLink(next);
+                node.ReTrain(train);
+
+                left = node;
+            }
+        }
+        else
+        {
+            if (next is null)
+            {
+                next = node;
+                node.ReParent(this);
+                node.ReTrain(train);
+
+                return TrainOperations.SUCCESS;
+            }
+            else
+            {
+                next.ReParent(node);
+
+                node.ReParent(this);
+                node.ReLink(next);
+                node.ReTrain(train);
+
+                next = node;
+            }
+        }
+
+        return TrainOperations.PASS;
+    }
+
     protected override TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))

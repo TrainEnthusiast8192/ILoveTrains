@@ -140,6 +140,40 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return TrainOperations.PASS;
     }
 
+    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    {
+        if (loopedOver.Contains(this))
+        {
+            return TrainOperations.LOOPED;
+        }
+
+        if (skipsRemainingIncludingCurrent != 0)
+        {
+            return TrainOperations.PASS;
+        }
+
+        if (next is null)
+        {
+            next = node;
+            node.ReParent(this);
+            node.ReTrain(train);
+
+            return TrainOperations.SUCCESS;
+        }
+        else
+        {
+            next.ReParent(node);
+            
+            node.ReParent(this);
+            node.ReLink(next);
+            node.ReTrain(train);
+
+            next = node;
+        }
+
+        return TrainOperations.PASS;
+    }
+
     protected override TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
@@ -149,8 +183,8 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
 
         if (node.Equals(this))
         {
-            previous?.ReLink(next ?? null);
-            next?.ReParent(previous ?? null);
+            previous?.ReLink(next);
+            next?.ReParent(previous);
             previous = null;
             next = null;
 
@@ -194,5 +228,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     protected override List<AbstractTrainNode> HandleRawBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
     {
         return [this, .. GetNext()?.RawBranchCollapse(loopedOver) ?? []];
+    }
+
+    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    {
+        throw new NotImplementedException();
     }
 }

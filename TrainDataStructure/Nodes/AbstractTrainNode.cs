@@ -7,6 +7,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public NodeEvents OnAdded = NodeEventsConstructor;
     public NodeEvents OnRemoved = NodeEventsConstructor;
     public NodeEvents OnAddedAsFirst = NodeEventsConstructor;
+    public NodeEvents OnInserted = NodeEventsConstructor;
     public NodeEvents OnReplaced = NodeEventsConstructor;
 
     public NodeEvents OnCollapse = NodeEventsConstructor;
@@ -117,14 +118,14 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     protected abstract TrainOperations HandleAddition(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver);
     public TrainOperations AddNode(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
     {
+        loopedOver.Add(this);
+
         TrainOperations ret = HandleAddition(node, loopedOver);
 
         if (ret.Is(TrainOperations.CUT_EARLY) || ret.Is(TrainOperations.CANCELLED))
         {
             return ret;
         }
-
-        loopedOver.Add(this);
 
         if (ret.Is(TrainOperations.PASS))
         {
@@ -138,10 +139,10 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         return ret;
     }
 
-    protected abstract TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver);
-    public TrainOperations RemoveNode(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected abstract TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver);
+    public TrainOperations InsertNode(AbstractTrainNode node, int skipsRemaining, HashSet<AbstractTrainNode> loopedOver)
     {
-        TrainOperations ret = HandleRemoval(node, loopedOver);
+        TrainOperations ret = HandleInsertion(node, skipsRemaining, loopedOver);
 
         if (ret.Is(TrainOperations.CUT_EARLY) || ret.Is(TrainOperations.CANCELLED))
         {
@@ -149,6 +150,30 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         }
 
         loopedOver.Add(this);
+
+        if (ret.Is(TrainOperations.PASS))
+        {
+            return GetNext()?.InsertNode(node, skipsRemaining - 1, loopedOver) ?? TrainOperations.PASS;
+        }
+        if (ret.Is(TrainOperations.SUCCESS))
+        {
+            node.OnInserted();
+        }
+
+        return ret;
+    }
+
+    protected abstract TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver);
+    public TrainOperations RemoveNode(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    {
+        TrainOperations ret = HandleRemoval(node, loopedOver);
+
+        loopedOver.Add(this);
+
+        if (ret.Is(TrainOperations.CUT_EARLY) || ret.Is(TrainOperations.CANCELLED))
+        {
+            return ret;
+        }        
 
         if (ret.Is(TrainOperations.PASS))
         {
