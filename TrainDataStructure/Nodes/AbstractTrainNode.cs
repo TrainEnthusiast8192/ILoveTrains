@@ -42,17 +42,20 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public abstract AbstractTrainNode? ReParent(AbstractTrainNode? node);
     public abstract ITrainCollection? ReTrain(ITrainCollection? train);
 
-    protected abstract List<AbstractTrainNode> HandleCollapse(HashSet<AbstractTrainNode> loopedOver);
-    public List<AbstractTrainNode> Collapse(HashSet<AbstractTrainNode> loopedOver)
+    protected abstract List<AbstractTrainNode> HandleCollapse(Stack<AbstractTrainNode> loopedOver);
+    public List<AbstractTrainNode> Collapse(Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
-            return [MarkerTrainNode.Standards.LoopingStructure(loopedOver.LastOrDefault())];
+            return [MarkerTrainNode.Standards.LoopingStructure(FindFinalMemberBeforeLoop(loopedOver))];
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         List<AbstractTrainNode> ret = HandleCollapse(loopedOver);
+
+        loopedOver.Pop();
+
         OnAnyCollapse();
         OnCollapse();
         OnAnyFullCollapse();
@@ -60,17 +63,20 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         return ret;
     }
 
-    protected abstract List<AbstractTrainNode> HandleBranchCollapse(HashSet<AbstractTrainNode> loopedOver);
-    public List<AbstractTrainNode> BranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected abstract List<AbstractTrainNode> HandleBranchCollapse(Stack<AbstractTrainNode> loopedOver);
+    public List<AbstractTrainNode> BranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
-            return [MarkerTrainNode.Standards.LoopingStructure(loopedOver.LastOrDefault())];
+            return [MarkerTrainNode.Standards.LoopingStructure(FindFinalMemberBeforeLoop(loopedOver))];
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         List<AbstractTrainNode> ret = HandleBranchCollapse(loopedOver);
+
+        loopedOver.Pop();
+
         OnAnyCollapse();
         OnBranchCollapse();
         OnAnyBranchCollapse();
@@ -78,17 +84,20 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         return ret;
     }
 
-    protected abstract List<AbstractTrainNode> HandleRawCollapse(HashSet<AbstractTrainNode> loopedOver);
-    public List<AbstractTrainNode> RawCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected abstract List<AbstractTrainNode> HandleRawCollapse(Stack<AbstractTrainNode> loopedOver);
+    public List<AbstractTrainNode> RawCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
             return [];
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         List<AbstractTrainNode> ret = HandleRawCollapse(loopedOver);
+
+        loopedOver.Pop();
+
         OnAnyCollapse();
         OnRawCollapse();
         OnAnyFullCollapse();
@@ -96,17 +105,20 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         return ret;
     }
 
-    protected abstract List<AbstractTrainNode> HandleRawBranchCollapse(HashSet<AbstractTrainNode> loopedOver);
-    public List<AbstractTrainNode> RawBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected abstract List<AbstractTrainNode> HandleRawBranchCollapse(Stack<AbstractTrainNode> loopedOver);
+    public List<AbstractTrainNode> RawBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
             return [];
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         List<AbstractTrainNode> ret = HandleBranchCollapse(loopedOver);
+
+        loopedOver.Pop();
+
         OnAnyCollapse();
         OnRawBranchCollapse();
         OnAnyBranchCollapse();
@@ -115,8 +127,8 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     }
 
 
-    protected abstract TrainOperations HandleAddition(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver);
-    public TrainOperations AddNode(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected abstract TrainOperations HandleAddition(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver);
+    public TrainOperations AddNode(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         TrainOperations ret = HandleAddition(node, loopedOver);
 
@@ -125,7 +137,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
             return ret;
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         if (ret.Is(TrainOperations.PASS))
         {
@@ -138,9 +150,15 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
 
         return ret;
     }
+    protected AbstractTrainNode? FindFinalMemberBeforeLoop(Stack<AbstractTrainNode> loopedOver)
+    {
+        return loopedOver.LastOrDefault(o => this.Equals(o.GetNext()));
+    }
 
-    protected abstract TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver);
-    public TrainOperations InsertNode(AbstractTrainNode node, int skipsRemaining, HashSet<AbstractTrainNode> loopedOver)
+
+
+    protected abstract TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, Stack<AbstractTrainNode> loopedOver);
+    public TrainOperations InsertNode(AbstractTrainNode node, int skipsRemaining, Stack<AbstractTrainNode> loopedOver)
     {
         TrainOperations ret = HandleInsertion(node, skipsRemaining, loopedOver);
 
@@ -149,7 +167,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
             return ret;
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         if (ret.Is(TrainOperations.PASS))
         {
@@ -163,8 +181,8 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         return ret;
     }
 
-    protected abstract TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver);
-    public TrainOperations RemoveNode(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected abstract TrainOperations HandleRemoval(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver);
+    public TrainOperations RemoveNode(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         TrainOperations ret = HandleRemoval(node, loopedOver);
 
@@ -173,7 +191,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
             return ret;
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         if (ret.Is(TrainOperations.PASS))
         {
@@ -187,8 +205,8 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         return ret;
     }
 
-    protected abstract TrainOperations HandleSignal(TrainSignal signal, HashSet<AbstractTrainNode> loopedOver);
-    public TrainOperations Signal(TrainSignal signal, HashSet<AbstractTrainNode> loopedOver)
+    protected abstract TrainOperations HandleSignal(TrainSignal signal, Stack<AbstractTrainNode> loopedOver);
+    public TrainOperations Signal(TrainSignal signal, Stack<AbstractTrainNode> loopedOver)
     {
         TrainOperations ret = HandleSignal(signal, loopedOver);
 
@@ -197,7 +215,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
             return ret;
         }
 
-        loopedOver.Add(this);
+        loopedOver.Push(this);
 
         if (ret.Is(TrainOperations.PASS))
         {

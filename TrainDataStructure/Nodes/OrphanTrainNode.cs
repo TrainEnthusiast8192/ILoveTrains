@@ -7,19 +7,19 @@ public abstract class OrphanTrainNode : AbstractTrainNode
     public override bool IsForking => false;
 
 
-    protected sealed override List<AbstractTrainNode> HandleCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override List<AbstractTrainNode> HandleCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this];
     }
-    protected sealed override List<AbstractTrainNode> HandleBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override List<AbstractTrainNode> HandleBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this];
     }
-    protected sealed override List<AbstractTrainNode> HandleRawCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override List<AbstractTrainNode> HandleRawCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [];
     }
-    protected sealed override List<AbstractTrainNode> HandleRawBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override List<AbstractTrainNode> HandleRawBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [];
     }
@@ -54,22 +54,22 @@ public abstract class OrphanTrainNode : AbstractTrainNode
         return null;
     }
 
-    protected sealed override TrainOperations HandleAddition(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override TrainOperations HandleAddition(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         return TrainOperations.CUT_EARLY;
     }
 
-    protected sealed override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, Stack<AbstractTrainNode> loopedOver)
     {
         return TrainOperations.CUT_EARLY;
     }
 
-    protected sealed override TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override TrainOperations HandleRemoval(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         return TrainOperations.CUT_EARLY;
     }
 
-    protected sealed override TrainOperations HandleSignal(TrainSignal signal, HashSet<AbstractTrainNode> loopedOver)
+    protected sealed override TrainOperations HandleSignal(TrainSignal signal, Stack<AbstractTrainNode> loopedOver)
     {
         return TrainOperations.CUT_EARLY;
     }

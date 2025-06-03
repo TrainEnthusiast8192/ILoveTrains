@@ -229,7 +229,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             return true;
         }
 
-        bool ret = first.AddNode(node, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS);
+        bool ret = first.AddNode(node, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS);
         if (ret) { count++; }
         return ret;
     }
@@ -247,19 +247,19 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
 
     public override List<AbstractTrainNode> BranchCollapse()
     {
-        return first?.BranchCollapse(new HashSet<AbstractTrainNode>()) ?? [];
+        return first?.BranchCollapse(new Stack<AbstractTrainNode>()) ?? [];
     }
     public override List<AbstractTrainNode> Collapse()
     {
-        return first?.Collapse(new HashSet<AbstractTrainNode>()) ?? [];
+        return first?.Collapse(new Stack<AbstractTrainNode>()) ?? [];
     }
     public override List<AbstractTrainNode> RawBranchCollapse()
     {
-        return first?.RawBranchCollapse(new HashSet<AbstractTrainNode>()) ?? [];
+        return first?.RawBranchCollapse(new Stack<AbstractTrainNode>()) ?? [];
     }
     public override List<AbstractTrainNode> RawCollapse()
     {
-        return first?.RawCollapse(new HashSet<AbstractTrainNode>()) ?? [];
+        return first?.RawCollapse(new Stack<AbstractTrainNode>()) ?? [];
     }
 
     public override int GetBranchLength()
@@ -409,7 +409,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
     public override bool Remove(AbstractTrainNode node)
     {
         AbstractTrainNode? next = node.GetNext();
-        bool ret = first?.RemoveNode(node, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) ?? false;
+        bool ret = first?.RemoveNode(node, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) ?? false;
         if (ret)
         {
             if (node.Equals(first))
@@ -501,7 +501,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
     public override bool Insert(int index, AbstractTrainNode node)
     {
         return index == 0 ? _insertAtHead(node) 
-            : first?.InsertNode(node, index, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) 
+            : first?.InsertNode(node, index, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) 
             ?? throw new IndexOutOfRangeException($"Index {index} was non-zero for insertion on empty train");
     }
     protected bool _insertAtHead(AbstractTrainNode node)
@@ -666,6 +666,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
         if (node is ValueTrainNode<T> vnode)
         {
             vnode.SetValue(newValue);
+            return true;
         }
 
         return false;
@@ -696,7 +697,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
 
     public override bool Signal(TrainSignal signal)
     {
-        return first?.Signal(signal, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) ?? false;
+        return first?.Signal(signal, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) ?? false;
     }
 
     public override bool Signal(params TrainSignal[] signals)

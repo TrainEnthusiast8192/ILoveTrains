@@ -121,7 +121,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return $"ValueTrainNode<{typeof(T)}> : {value}";
     }
 
-    protected override TrainOperations HandleAddition(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleAddition(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -140,7 +140,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return TrainOperations.PASS;
     }
 
-    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -174,7 +174,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return TrainOperations.PASS;
     }
 
-    protected override TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleRemoval(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -196,7 +196,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return TrainOperations.PASS;
     }
 
-    protected override TrainOperations HandleSignal(TrainSignal signal, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleSignal(TrainSignal signal, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -210,22 +210,22 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return TrainOperations.PASS;
     }
 
-    protected override List<AbstractTrainNode> HandleCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this, .. GetNext()?.Collapse(loopedOver) ?? []];
     }
 
-    protected override List<AbstractTrainNode> HandleBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this, .. GetNext()?.BranchCollapse(loopedOver) ?? []];
     }
 
-    protected override List<AbstractTrainNode> HandleRawCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleRawCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this, ..GetNext()?.RawCollapse(loopedOver) ?? []];
     }
 
-    protected override List<AbstractTrainNode> HandleRawBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleRawBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this, .. GetNext()?.RawBranchCollapse(loopedOver) ?? []];
     }

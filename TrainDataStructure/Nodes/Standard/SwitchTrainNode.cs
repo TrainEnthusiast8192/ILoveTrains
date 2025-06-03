@@ -150,39 +150,42 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         return ret;
     }
 
-    protected override List<AbstractTrainNode> HandleCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleCollapse(Stack<AbstractTrainNode> loopedOver)
     {
+        List<AbstractTrainNode> LeftCollapse = left?.Collapse(loopedOver) ?? [];
+        List<AbstractTrainNode> RightCollapse = next?.Collapse(loopedOver) ?? [];
+
         List<AbstractTrainNode> ret = [this,
-                        ..left?.Collapse(loopedOver) ?? [],
+                        ..LeftCollapse,
                         MarkerTrainNode.Standards.EndOfBranch(id, true),
-                        ..next?.Collapse(loopedOver) ?? [],
+                        ..RightCollapse,
                         MarkerTrainNode.Standards.EndOfFork(id, false)
                         ];
 
         return ret;
     }
 
-    protected override List<AbstractTrainNode> HandleBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
-        return [this, .. GetNext()?.RawBranchCollapse(loopedOver) ?? [], MarkerTrainNode.Standards.EndOfFork(this)];
+        return [this, .. GetNext()?.BranchCollapse(loopedOver) ?? [], MarkerTrainNode.Standards.EndOfFork(this)];
     }
 
-    protected override List<AbstractTrainNode> HandleRawCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleRawCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         List<AbstractTrainNode> ret = [this,
-                        ..left?.Collapse(loopedOver) ?? [],
-                        ..next?.Collapse(loopedOver) ?? [],
+                        ..left?.RawCollapse(loopedOver) ?? [],
+                        ..next?.RawCollapse(loopedOver) ?? [],
                         ];
 
         return ret;
     }
 
-    protected override List<AbstractTrainNode> HandleRawBranchCollapse(HashSet<AbstractTrainNode> loopedOver)
+    protected override List<AbstractTrainNode> HandleRawBranchCollapse(Stack<AbstractTrainNode> loopedOver)
     {
         return [this, .. GetNext()?.RawBranchCollapse(loopedOver) ?? []];
     }
 
-    protected override TrainOperations HandleAddition(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleAddition(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -217,7 +220,7 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         }
     }
 
-    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleInsertion(AbstractTrainNode node, int skipsRemainingIncludingCurrent, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -275,7 +278,7 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         return TrainOperations.PASS;
     }
 
-    protected override TrainOperations HandleRemoval(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleRemoval(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
@@ -297,7 +300,7 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         return TrainOperations.PASS;
     }
 
-    protected override TrainOperations HandleSignal(TrainSignal signal, HashSet<AbstractTrainNode> loopedOver)
+    protected override TrainOperations HandleSignal(TrainSignal signal, Stack<AbstractTrainNode> loopedOver)
     {
         if (loopedOver.Contains(this))
         {
