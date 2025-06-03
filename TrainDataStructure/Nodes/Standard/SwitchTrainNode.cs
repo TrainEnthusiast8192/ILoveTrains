@@ -224,7 +224,7 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
             return TrainOperations.LOOPED;
         }
 
-        if (skipsRemainingIncludingCurrent != 0)
+        if (skipsRemainingIncludingCurrent != 1)
         {
             return TrainOperations.PASS;
         }

@@ -147,7 +147,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
             return TrainOperations.LOOPED;
         }
 
-        if (skipsRemainingIncludingCurrent != 0)
+        if (skipsRemainingIncludingCurrent != 1)
         {
             return TrainOperations.PASS;
         }
