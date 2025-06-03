@@ -4,15 +4,13 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     protected AbstractTrainNode? first;
     protected int count;
     protected readonly Guid GUID;
-    protected readonly TrainCollectionCache cache;
-
 
     public override Guid GetID() => GUID;
     public override int Count => GetBranchLength();
     public override int GetTotalCount() => count;
     public override bool EnforcesTypeSafety => false;
     public override bool IsReadOnly => false;
-    public override bool IsCached => true;
+    public override bool IsCached => false;
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(GUID);
     public override int GetHashCode() => GUID.GetHashCode();
@@ -24,19 +22,16 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         first = null;
         count = 0;
         GUID = Guid.NewGuid();
-        cache = new TrainCollectionCache(this, true, true, true);
     }
     protected Train(Guid forceID) : base()
     {
         first = null;
         count = 0;
         GUID = forceID;
-        cache = new TrainCollectionCache(this, true, true, true);
     }
     public Train(params AbstractTrainNode?[] initNodes) : base(initNodes)
     {
         GUID = Guid.NewGuid();
-        cache = new TrainCollectionCache(this, true, true, true);
         foreach (AbstractTrainNode? n in initNodes)
         {
             if (n is not null) { Add(n); }
@@ -45,7 +40,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     public Train(params T?[] initValues) : base(initValues)
     {
         GUID = Guid.NewGuid();
-        cache = new TrainCollectionCache(this, true, true, true);
         foreach (T? val in initValues)
         {
             Add(val);
@@ -104,8 +98,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
     public override bool Add(T? value) => Add(new ValueTrainNode<T>(value));
     protected override bool HandleAddExternal<M>(M? value) where M : default 
-    { 
-        cache.IsTypeSafe &= typeof(M).Equals(typeof(T));
+    {
         return Add(new ValueTrainNode<M>(value));
     }
     public override bool Add(AbstractTrainNode node)
@@ -121,50 +114,44 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
             count = 1;
 
-            cache.AddedNodes.Enqueue(node);
-
-            cache.IsLinear &= !node.IsForking;
-            cache.IsTypeSafe &= !node.IsValueNode || node is ValueTrainNode<T>;
-
             return true;
         }
 
         bool ret = first.AddNode(node, new HashSet<AbstractTrainNode>()).Is(TrainOperations.SUCCESS);
+        if (ret) { count++; }
+        return ret;
+    }
+    public override bool Add(PreBuiltTrainStructure structure)
+    {
+        bool ret = Add(structure.first);
+        
         if (ret)
         {
-            count++;
-            cache.AddedNodes.Enqueue(node);
-
-            cache.IsLinear &= !node.IsForking;
-            cache.IsTypeSafe &= !node.IsValueNode ||node is ValueTrainNode<T>;
+            count += structure.Count - 1;
         }
+
         return ret;
     }
 
     public override List<AbstractTrainNode> BranchCollapse()
     {
-        if (cache.IsPermanent && cache.IsLinear) { return cache.AddedNodes.ToList(); }
         return first?.BranchCollapse(new HashSet<AbstractTrainNode>()) ?? [];
     }
     public override List<AbstractTrainNode> Collapse()
     {
-        if (cache.IsPermanent && cache.IsLinear) { return cache.AddedNodes.ToList(); }
         return first?.Collapse(new HashSet<AbstractTrainNode>()) ?? [];
     }
     public override List<AbstractTrainNode> RawBranchCollapse()
     {
-        if (cache.IsPermanent && cache.IsLinear) { return cache.AddedNodes.ToList(); }
         return first?.RawBranchCollapse(new HashSet<AbstractTrainNode>()) ?? [];
     }
     public override List<AbstractTrainNode> RawCollapse()
     {
-        if (cache.IsPermanent && cache.IsLinear) { return cache.AddedNodes.ToList(); }
         return first?.RawCollapse(new HashSet<AbstractTrainNode>()) ?? [];
     }
 
     public override int GetBranchLength()
     {
-        if (cache.IsPermanent && cache.IsLinear) { return count; }
         int counter = 0;
         AbstractTrainNode? current = first;
         while (current is not null)
@@ -178,11 +165,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
     public override AbstractTrainNode GetNodeAt(int index)
     {
-        if (cache.IsLinear && cache.IsPermanent) 
-        { 
-            return cache.AddedNodes.ElementAtOrDefault(index) ?? throw new IndexOutOfRangeException($"Index {index} was outside the bounds of the branch");
-        }
-
         AbstractTrainNode? current = first;
         
         for (int i = 0; i < index; i++)
@@ -323,47 +305,35 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
                 first = next;
             }
             count--;
-
-            cache.IsPermanent = false;
-
-            DeCache(node);
         }
         return ret;
     }
-    protected bool DeCache(AbstractTrainNode node)
+
+    // Returns whether all removals succeeded
+    public override bool Remove(params AbstractTrainNode[] nodes)
     {
-        bool ret = false;
-        int finalCacheCnt = cache.AddedNodes.Count;
-        for (int i = 0; i < finalCacheCnt; i++)
+        bool ret = true;
+
+        foreach (AbstractTrainNode n in nodes)
         {
-            AbstractTrainNode n = cache.AddedNodes.Dequeue();
-            if (n.Equals(node))
-            {
-                i++;
-                ret = true;
-            }
-            else
-            {
-                cache.AddedNodes.Enqueue(n);
-            }
+            ret &= Remove(n);
         }
+
         return ret;
     }
 
     public override bool RemoveAt(int index) => Remove(GetNodeAt(index));
     public override bool RemoveAt(Index index) => Remove(GetNodeAt(index));
+    public override bool RemoveRange(Range range) => Remove(GetNodesAt(range).ToArray());
 
     public override bool Clear()
     {
         List<AbstractTrainNode> nodes = RawBranchCollapse();
-        bool ret = false;
+        bool ret = true;
         for (int i = nodes.Count - 1; i > -1; i--)
         {
-            ret |= Remove(nodes[i]);
+            ret &= Remove(nodes[i]);
         }
-        cache.IsPermanent |= ret;
-        cache.IsLinear |= ret;
-        cache.IsTypeSafe |= ret;
 
         return ret;
     }
@@ -381,9 +351,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         if (ret)
         {
             next?.ReParent(newNode);
-
-            cache.AddedNodes.Enqueue(newNode);
-            cache.IsLinear &= !newNode.IsForking;
         }
         else
         {
@@ -402,10 +369,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         int end = range.End.GetOffset(cnt);
 
         int arrCnt = 0;
-        bool ret = false;
+        bool ret = true;
         for (int i = start; i < end; i++)
         {
-            ret |= Insert(i, value[arrCnt]);
+            ret &= Insert(i, value[arrCnt]);
             arrCnt++;
         }
 
@@ -420,9 +387,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         if (ret)
         {
             next?.ReParent(value);
-            cache.AddedNodes.Enqueue(value);
-            cache.IsLinear &= !value.IsForking;
-            cache.IsTypeSafe &= !value.IsValueNode || value is ValueTrainNode<T>;
         }
         else
         {
@@ -432,19 +396,19 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         return ret;
     }
 
-    public override bool Insert(Index index, AbstractTrainNode value) => Insert(index.GetOffset(GetBranchLength()) - 1, value);
+    public override bool Insert(Index index, AbstractTrainNode node) => Insert(index.GetOffset(GetBranchLength()) - 1, node);
 
-    public override bool Insert(Range range, AbstractTrainNode[] value)
+    public override bool Insert(Range range, AbstractTrainNode[] nodes)
     {
         int cnt = GetBranchLength();
         int start = range.Start.GetOffset(cnt);
         int end = range.End.GetOffset(cnt);
 
         int arrCnt = 0;
-        bool ret = false;
+        bool ret = true;
         for (int i = start; i < end; i++)
         {
-            ret |= Insert(i, value[arrCnt]);
+            ret &= Insert(i, nodes[arrCnt]);
             arrCnt++;
         }
 
@@ -453,37 +417,33 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
     public override bool Contains(AbstractTrainNode item)
     {
-        if (cache.IsLinear && cache.IsPermanent) { return cache.AddedNodes.Contains(item); }
-
         int cnt = GetBranchLength();
-        bool ret = false;
+        bool ret = true;
         for (int i = 0; i < cnt; i++)
         {
-            ret |= item.Equals(GetNodeAt(i));
+            ret &= item.Equals(GetNodeAt(i));
         }
         return ret;
     }
     public override bool Contains(T? item)
     {
         int cnt = GetBranchLength();
-        bool ret = false;
+        bool ret = true;
         ValueTrainNode<T> temp = new ValueTrainNode<T>(item);
         for (int i = 0; i < cnt; i++)
         {
-            ret |= temp.EquivalentTo(GetNodeAt(i));
+            ret &= temp.EquivalentTo(GetNodeAt(i));
         }
         return ret;
     }
     public override bool Contains<M>(M? item) where M : default
     {
-        if (cache.IsTypeSafe && cache.IsPermanent && cache.IsLinear && !typeof(M).Equals(typeof(T))) { return false; }
-
         int cnt = GetBranchLength();
-        bool ret = false;
+        bool ret = true;
         ValueTrainNode<M> temp = new ValueTrainNode<M>(item);
         for (int i = 0; i < cnt; i++)
         {
-            ret |= temp.EquivalentTo(GetNodeAt(i));
+            ret &= temp.EquivalentTo(GetNodeAt(i));
         }
         return ret;
     }
@@ -519,8 +479,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     }
     public override int IndexOf<M>(M? item) where M : default
     {
-        if (cache.IsTypeSafe && cache.IsPermanent && cache.IsLinear && !typeof(M).Equals(typeof(T))) { return -1; }
-
         int cnt = GetBranchLength();
         int ret = -1;
         ValueTrainNode<M> temp = new ValueTrainNode<M>(item);
@@ -577,10 +535,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
         int end = range.End.GetOffset(brnch);
 
         int arrcnt = 0;
-        bool ret = false;
+        bool ret = true;
         for (int i = start; i < end; i++)
         {
-            ret |= ReplaceAt(i, newValues[arrcnt]);
+            ret &= ReplaceAt(i, newValues[arrcnt]);
             arrcnt++;
         }
 
@@ -594,39 +552,14 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
     public override bool Signal(params TrainSignal[] signals)
     {
-        bool ret = false;
+        bool ret = true;
         foreach (TrainSignal s in signals)
         {
-            ret |= Signal(s);
+            ret &= Signal(s);
         }
         return ret;
     }
 
-    public bool AddStructure(PreBuiltTrainStructure structure)
-    {
-        cache.AddedNodes.Enqueue(structure); // Enqueue the structure to mark the next "structure.count" nodes to be from the structure
-        bool ret = Add(structure.first); // Add the node to the end
-        if (ret)
-        {
-            count += structure.count - 1; // Add the amount of nodes, minus the one we already added
-
-            // Add each node to the cache
-            structure.first.RawCollapse(new HashSet<AbstractTrainNode>()).ForEach(o => cache.AddedNodes.Enqueue(o));
-
-            // Update cache
-            cache.IsLinear &= !structure.hasFork;
-            cache.IsTypeSafe &= !structure.hasExternalType;
-
-            // Update structure metadata
-            structure.train = this;
-        }
-        else
-        {
-            cache.AddedNodes.Dequeue(); // Remove the structure if adding of the first node failed
-        }
-
-        return ret;
-    }
 
     public override T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }
     public override T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }
