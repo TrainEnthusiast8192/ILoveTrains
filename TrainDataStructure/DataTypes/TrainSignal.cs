@@ -4,21 +4,20 @@ public class TrainSignal
 {
     protected readonly string[] codes = [EMPTY_CODE];
     protected readonly object?[] payloads = [];
+    protected readonly bool empty = false;
+    public bool IsEmpty => empty;
+    protected readonly CancellationToken token;
+    public bool IsCancelled => token.IsCancellationRequested;
+    protected readonly bool transitive = false; public bool IsTransitive => transitive;
+    protected readonly bool awaitable = false; public bool IsAwaitable => awaitable;
 
     protected static void SignalEventsConstructor(TrainSignal signalOrigin) { }
     public delegate void SignalEvents(TrainSignal signalOrigin);
     public SignalEvents OnSignalSuccess = SignalEventsConstructor;
 
-    public bool IsCancelled => token.IsCancellationRequested;
-    protected readonly CancellationToken token;
-
-    protected readonly bool transitive = false; public bool IsTransitive => transitive;
-    protected readonly bool awaitable = false; public bool IsAwaitable => awaitable;
-
     public static readonly string EMPTY_CODE = "__EMPTY__";
     public static readonly TrainSignal EMPTY = new TrainSignal([EMPTY_CODE], [], false, false);
-    protected readonly bool empty = false;
-    public bool IsEmpty => empty;
+
 
     public TrainSignal Copy()
     {
