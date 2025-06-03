@@ -1,5 +1,4 @@
 ﻿namespace TrainDataStructure.DataTypes;
-
 public readonly record struct TrainOperations(TrainOperations.OPS Operation)
 {
     public readonly bool Is(TrainOperations other) => Operation.Equals(other.Operation);
