@@ -3,17 +3,17 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 {
     protected AbstractTrainNode? first;
     protected int count;
-    protected readonly Guid GUID;
+    protected readonly int SUUID;
 
-    public override Guid GetID() => GUID;
+    public override int GetID() => SUUID;
     public override int Count => GetBranchLength();
     public override int GetTotalCount() => count;
     public override bool EnforcesTypeSafety => false;
     public override bool IsReadOnly => false;
     public override bool IsCached => false;
 
-    public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(GUID);
-    public override int GetHashCode() => GUID.GetHashCode();
+    public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
+    public override int GetHashCode() => SUUID;
 
     public override AbstractTrainNode? GetFirst() => first;
 
@@ -21,17 +21,18 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     {
         first = null;
         count = 0;
-        GUID = Guid.NewGuid();
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
     }
-    protected Train(Guid forceID) : base()
+    protected Train(int forceID) : base()
     {
         first = null;
         count = 0;
-        GUID = forceID;
+        SUUID = forceID;
+        IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
     }
     public Train(params AbstractTrainNode?[] initNodes) : base(initNodes)
     {
-        GUID = Guid.NewGuid();
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         foreach (AbstractTrainNode? n in initNodes)
         {
             if (n is not null) { Add(n); }
@@ -39,7 +40,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     }
     public Train(params T?[] initValues) : base(initValues)
     {
-        GUID = Guid.NewGuid();
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         foreach (T? val in initValues)
         {
             Add(val);
@@ -47,6 +48,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
     }
     public Train(params object?[] initValuesAndNodes)
     {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         foreach (object? n in initValuesAndNodes)
         {
             if (n is T value) { Add(value); }
@@ -54,6 +56,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
+    }
+    ~Train()
+    {
+        IUniquelyIdentifiableTrainObject.ReturnID(this);
     }
 
     public override IEnumerator<AbstractTrainNode> GetEnumerator()
@@ -87,7 +93,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IEnum
 
     public override Train<M> Cast<M>() where M : default
     {
-        Train<M> ret = new Train<M>(GUID);
+        Train<M> ret = new Train<M>(SUUID);
         ret.count = count;
         ret.first = first;
         return ret;

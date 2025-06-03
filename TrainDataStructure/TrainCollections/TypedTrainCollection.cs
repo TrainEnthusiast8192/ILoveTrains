@@ -12,7 +12,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract bool IsReadOnly { get; }
     public abstract bool IsCached { get; }
 
-    public abstract Guid GetID();
+    public abstract int GetID();
     public abstract AbstractTrainNode? GetFirst();
     public abstract int GetTotalCount();
     public abstract int GetBranchLength();
@@ -21,6 +21,8 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract bool Add(T? value);
     // Add node
     public abstract bool Add(AbstractTrainNode node);
+    // Add structure
+    public abstract bool Add(PreBuiltTrainStructure structure);
 
     // Insert value
     public abstract bool Insert(int index, T? value);
@@ -39,8 +41,10 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     // Remove
     public abstract bool Remove(T? value);
     public abstract bool Remove(AbstractTrainNode node);
+    public abstract bool Remove(params AbstractTrainNode[] node);
     public abstract bool RemoveAt(int index);
     public abstract bool RemoveAt(Index index);
+    public abstract bool RemoveRange(Range range);
     public abstract bool Clear();
 
     // Replace value
@@ -140,7 +144,7 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public abstract bool IsReadOnly { get; }
     public abstract bool IsCached { get; }
 
-    public abstract Guid GetID();
+    public abstract int GetID();
     public abstract AbstractTrainNode? GetFirst();
     public abstract int GetTotalCount();
     public abstract int GetBranchLength();
@@ -152,6 +156,8 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public abstract bool Add(T? value);
     // Add node
     public abstract bool Add(AbstractTrainNode node);
+    // Add structure
+    public abstract bool Add(PreBuiltTrainStructure structure);
 
     // Insert value
     public abstract bool Insert(int index, T? value);
@@ -170,8 +176,10 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     // Remove
     public abstract bool Remove(T? value);
     public abstract bool Remove(AbstractTrainNode node);
+    public abstract bool Remove(params AbstractTrainNode[] node);
     public abstract bool RemoveAt(int index);
     public abstract bool RemoveAt(Index index);
+    public abstract bool RemoveRange(Range range);
     public abstract bool Clear();
 
     // Replace value
