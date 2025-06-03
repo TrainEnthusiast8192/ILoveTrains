@@ -118,14 +118,14 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     protected abstract TrainOperations HandleAddition(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver);
     public TrainOperations AddNode(AbstractTrainNode node, HashSet<AbstractTrainNode> loopedOver)
     {
-        loopedOver.Add(this);
-
         TrainOperations ret = HandleAddition(node, loopedOver);
 
         if (ret.Is(TrainOperations.CUT_EARLY) || ret.Is(TrainOperations.CANCELLED))
         {
             return ret;
         }
+
+        loopedOver.Add(this);
 
         if (ret.Is(TrainOperations.PASS))
         {
@@ -168,12 +168,12 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     {
         TrainOperations ret = HandleRemoval(node, loopedOver);
 
-        loopedOver.Add(this);
-
         if (ret.Is(TrainOperations.CUT_EARLY) || ret.Is(TrainOperations.CANCELLED))
         {
             return ret;
-        }        
+        }
+
+        loopedOver.Add(this);
 
         if (ret.Is(TrainOperations.PASS))
         {
