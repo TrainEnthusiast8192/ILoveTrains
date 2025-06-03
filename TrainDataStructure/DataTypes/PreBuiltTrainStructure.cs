@@ -1,49 +1,14 @@
 ﻿namespace TrainDataStructure.DataTypes;
-public class PreBuiltTrainStructure : OrphanTrainNode
+public record class PreBuiltTrainStructure(AbstractTrainNode first, bool IsLinear, bool IsTypeSafe, int Count)
 {
-    public AbstractTrainNode first;
-    public int count;
+    public AbstractTrainNode first = first;
 
-    public bool hasFork;
-    public bool hasExternalType;
+    public bool IsLinear = IsLinear;
+    public bool IsTypeSafe = IsTypeSafe;
+    public int Count = Count;
 
-    public ITrainCollection? train;
-
-    public PreBuiltTrainStructure(AbstractTrainNode first, int count, bool hasFork, bool hasExternalType)
-    {
-        this.first = first;
-        this.count = count;
-        this.hasFork = hasFork;
-        this.hasExternalType = hasExternalType;
-    }
-
-    public override PreBuiltTrainStructure Clone()
-    {
-        return new PreBuiltTrainStructure(first, count, hasFork, hasExternalType);
-    }
-
-    public override int CompareTo(object? obj)
-    {
-        return first.CompareTo(obj);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return first.Equals(obj);
-    }
-
-    public override bool EquivalentTo(AbstractTrainNode? node)
-    {
-        return first.EquivalentTo(node);
-    }
-
-    public override int GetHashCode()
-    {
-        return first.GetHashCode();
-    }
-
-    public override string ToString()
-    {
-        return String.Concat(first.Collapse(new HashSet<AbstractTrainNode>()).Select(o => o.ToString()));
-    }
+    protected static bool PreBuiltStructureEventsConstructor(ITrainCollection? connectedTrain) => true;
+    public delegate bool PreBuiltTrainStructureEvents(ITrainCollection? connectedTrain);
+    public PreBuiltTrainStructureEvents OnConnectionSuccess = PreBuiltStructureEventsConstructor;
+    public PreBuiltTrainStructureEvents OnConnectionFailure = PreBuiltStructureEventsConstructor;
 }
