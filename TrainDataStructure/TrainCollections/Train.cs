@@ -38,6 +38,14 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             if (n is not null) { Add(n); }
         }
     }
+    public Train(IEnumerable<AbstractTrainNode> initNodes) : base(initNodes)
+    {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        foreach (AbstractTrainNode? n in initNodes)
+        {
+            if (n is not null) { Add(n); }
+        }
+    }
     public Train(params T?[] initValues) : base(initValues)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -46,7 +54,26 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             Add(val);
         }
     }
+    public Train(IEnumerable<T?> initValues) : base(initValues)
+    {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        foreach (T? val in initValues)
+        {
+            Add(val);
+        }
+    }
     public Train(params object?[] initValuesAndNodes)
+    {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        foreach (object? n in initValuesAndNodes)
+        {
+            if (n is T value) { Add(value); }
+            else if (n is AbstractTrainNode node) { Add(node); }
+            else if (n is IComparable comp) { AddExternal(comp); }
+            else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
+        }
+    }
+    public Train(IEnumerable<object?> initValuesAndNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         foreach (object? n in initValuesAndNodes)

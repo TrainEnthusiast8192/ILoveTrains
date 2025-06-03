@@ -4,7 +4,9 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     // Constructors
     public TypedTrainCollection() { }
     public TypedTrainCollection(params AbstractTrainNode?[] initNodes) { }
+    public TypedTrainCollection(IEnumerable<AbstractTrainNode> initNodes) { }
     public TypedTrainCollection(params T?[] initValues) { }
+    public TypedTrainCollection(IEnumerable<T?> initValues) { }
     ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
     public void Dispose()
     {
@@ -148,7 +150,9 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     // Constructors
     public TypedTrainCollection() { }
     public TypedTrainCollection(params AbstractTrainNode?[] initNodes) { }
+    public TypedTrainCollection(IEnumerable<AbstractTrainNode> initNodes) { }
     public TypedTrainCollection(params T?[] initValues) { }
+    public TypedTrainCollection(IEnumerable<T?> initValues) { }
     ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
     public void Dispose()
     {
