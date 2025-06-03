@@ -17,6 +17,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
 
     public override AbstractTrainNode? GetFirst() => first;
 
+    // STANDARD CONSTRUCTORS
     public Train() : base()
     {
         first = null;
@@ -30,6 +31,8 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
         SUUID = forceID;
         IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
     }
+
+    // NODE CONSTRUCTORS
     public Train(params AbstractTrainNode?[] initNodes) : base(initNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -46,6 +49,16 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             if (n is not null) { Add(n); }
         }
     }
+    public Train(Span<AbstractTrainNode> initNodes) : base(initNodes)
+    {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        foreach (AbstractTrainNode val in initNodes)
+        {
+            Add(val);
+        }
+    }
+
+    // VALUE CONSTRUCTORS
     public Train(params T?[] initValues) : base(initValues)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -62,6 +75,16 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             Add(val);
         }
     }
+    public Train(Span<T> initValues) : base(initValues)
+    {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        foreach (T val in initValues)
+        {
+            Add(val);
+        }
+    }
+
+    // DYNAMIC CONSTRUCTORS
     public Train(params object?[] initValuesAndNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -84,6 +107,27 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
     }
+    public Train(Span<object?> initValuesAndNodes)
+    {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        foreach (object? n in initValuesAndNodes)
+        {
+            if (n is T value) { Add(value); }
+            else if (n is AbstractTrainNode node) { Add(node); }
+            else if (n is IComparable comp) { AddExternal(comp); }
+            else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
+        }
+    }
+
+    // OTHER CONSTRUCTORS
+    public Train(PreBuiltTrainStructure initStructure) : base(initStructure)
+    {
+        Add(initStructure);
+    }
+
+    public static implicit operator Train<T>(T? initValue) => new(initValue);
+    public static implicit operator Train<T>(AbstractTrainNode initNode) => new(initNode);
+    public static implicit operator Train<T>(PreBuiltTrainStructure initStructure) => new(initStructure);
     ~Train()
     {
         IUniquelyIdentifiableTrainObject.ReturnID(this);
