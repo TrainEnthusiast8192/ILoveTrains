@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TrainDataStructure.TrainCollections;
+﻿namespace TrainDataStructure.TrainCollections;
 public interface ITrainCollection : IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>, IUniquelyIdentifiableTrainObject, IDisposable
 {
     public abstract AbstractTrainNode? GetFirst();
