@@ -153,7 +153,6 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     protected static AbstractTrainNode? FindFinalMemberBeforeLoop(Stack<AbstractTrainNode> loopedOver)
     {
         return loopedOver.Peek();
-        //return loopedOver.LastOrDefault(o => this.Equals(o.GetNext()));
     }
 
 
