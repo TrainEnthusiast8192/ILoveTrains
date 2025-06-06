@@ -7,6 +7,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     public override bool IsOrphanNode => false;
 
     protected T? value;
+    public override Type GetStoredTypeOrDefault() => typeof(T);
     public T? GetValue()
     {
         return value;
@@ -72,8 +73,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     }
     public override bool Equals(object? node)
     {
-        return ReferenceEquals(node, this);
+        return node is ValueTrainNode<T> vnode && EqualityComparer<T>.Default.Equals(value, vnode.value);
     }
+    public static bool operator ==(ValueTrainNode<T> nodeA, ValueTrainNode<T> nodeB) => nodeA.value?.Equals(nodeB.value) ?? false;
+    public static bool operator !=(ValueTrainNode<T> nodeA, ValueTrainNode<T> nodeB) => !(nodeA == nodeB);
 
     public override int GetHashCode()
     {

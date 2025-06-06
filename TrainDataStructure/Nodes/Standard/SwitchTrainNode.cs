@@ -32,11 +32,9 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
     protected ITrainCollection? train;
 
     public override bool IsValueNode => false;
-
+    public override Type? GetStoredTypeOrDefault() => default;
     public override bool IsUtilityNode => true;
-
     public override bool IsOrphanNode => false;
-
     public override bool IsForking => true;
 
     public SwitchTrainNode()

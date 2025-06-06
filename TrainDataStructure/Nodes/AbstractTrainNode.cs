@@ -22,6 +22,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public NodeEvents OnAnyBranchCollapse = NodeEventsConstructor;
 
     public abstract bool IsValueNode { get; }
+    public abstract Type? GetStoredTypeOrDefault();
     public abstract bool IsUtilityNode { get; }
     public abstract bool IsOrphanNode { get; }
     public abstract bool IsForking { get; }
