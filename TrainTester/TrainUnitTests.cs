@@ -9,6 +9,25 @@ public class TrainUnitTests
     struct TestStruct1;
     struct TestStruct2 : IComparable { public int CompareTo(object? obj) { return 0; } }
 
+
+    [Test]
+    public async Task TestConstructors()
+    {
+        Train<int> t1 = [];
+        await Assert.That(t1.Count).IsEqualTo(0);
+        Train<int> t2 = new();
+        await Assert.That(t2.Count).IsEqualTo(0);
+        Train<int> t3 = new Train<int> { };
+        await Assert.That(t3.Count).IsEqualTo(0);
+        Train<int> t4 = 3298;
+        await Assert.That(((ValueTrainNode<int>)t4.GetFirst()!).GetValue()).IsEqualTo(3298);
+
+        PreBuiltTrainStructure structure = new PreBuiltTrainStructure(new ValueTrainNode<int>(4), new ValueTrainNode<int>(5));
+        Train<int> t5 = new Train<int>(structure);
+
+        await Assert.That(((ValueTrainNode<int>)t5.GetFirst()!).GetValue()).IsEqualTo(4);
+    }
+
     [Test]
     public async Task TestAddNode()
     {
