@@ -1,0 +1,21 @@
+[
+  {
+    "Name": "TUnit",
+    "Projects": [
+      {
+        "Path": "TrainTester\\TrainTester.csproj",
+        "Action": "StartWithoutDebugging"
+      }
+    ]
+  },
+  {
+    "Name": "Explore",
+    "Projects": [
+      {
+        "Path": "TrainExplorer\\TrainExplorer.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "TrainExplorer"
+      }
+    ]
+  }
+]
