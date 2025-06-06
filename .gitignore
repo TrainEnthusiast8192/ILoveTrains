@@ -1,4 +1,6 @@
-**/bin
-**/obj
+**/TrainExplorer/bin
+**/TrainDataStructure/bin
+**/TrainExplorer/obj
+**/TrainDataStructure/obj
 **/.vs
 **TrainExplorer/oldcode.cs
