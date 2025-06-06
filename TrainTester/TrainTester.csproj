@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit" Version="0.25.0" />
+    <ProjectReference Include="..\TrainDataStructure\TrainDataStructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TrainDataStructure\TrainDataStructure.csproj" />
+    <PackageReference Include="TUnit" Version="0.25.6" />
   </ItemGroup>
 
 </Project>

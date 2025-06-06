@@ -1,5 +1,4 @@
 ﻿global using System;
-global using System.Collections;
 global using System.Collections.Generic;
 global using TrainDataStructure.Internal;
 global using TrainDataStructure.Nodes.Interfacing;
@@ -9,4 +8,3 @@ global using TrainDataStructure.Nodes;
 global using TrainDataStructure.DataTypes;
 global using TrainDataStructure.TrainCollections;
 global using TrainDataStructure;
-global using System.Collections.Immutable;
