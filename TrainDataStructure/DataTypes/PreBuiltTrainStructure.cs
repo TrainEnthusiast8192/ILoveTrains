@@ -15,27 +15,30 @@ public record class PreBuiltTrainStructure
         Count = 0;
         IsLinear = true;
         IsTypeSafe = true;
-        
+        Type? firstSeenType = null;
+
         if (nodes.Length == 0) { throw new ArgumentException("No nodes supplied to constructor of prebuilt"); }
         AbstractTrainNode firstInNodes = nodes[0];
         first = firstInNodes;
         firstInNodes.ReParent(null);
 
-        Type? firstSeenType = first.GetStoredTypeOrDefault();
-
         int cnt = nodes.Length;
-        for (int i = 1; i < cnt; i++)
+        for (int i = 0; i < cnt; i++)
         {
             AbstractTrainNode n = nodes[i];
             if (first.AddNode(n, new()).Is(TrainOperations.SUCCESS))
             {
                 Count++;
-                IsLinear &= !n.IsForking;
+                if (n.IsForking)
+                {
+                    IsLinear = false;
+                }
                 if (n.IsValueNode)
                 {
-                    Type? T = n.GetStoredTypeOrDefault();
+                    ValueTrainNode<IComparable> vnode = (ValueTrainNode<IComparable>)n;
+                    Type? T = vnode.GetValue()?.GetType();
                     firstSeenType ??= T;
-                    IsTypeSafe &= Type.Equals(T, firstSeenType) | T is null;
+                    IsTypeSafe &= Type.Equals(T, firstSeenType);
                 }
             }
         }

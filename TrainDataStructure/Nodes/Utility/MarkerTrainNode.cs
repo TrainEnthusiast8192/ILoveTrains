@@ -1,5 +1,4 @@
-﻿
-namespace TrainDataStructure.Nodes.Utility;
+﻿namespace TrainDataStructure.Nodes.Utility;
 public class MarkerTrainNode : OrphanTrainNode
 {
     protected string message;
@@ -51,10 +50,6 @@ public class MarkerTrainNode : OrphanTrainNode
         //}
     }
 
-    public override Type? GetStoredTypeOrDefault()
-    {
-        return default;
-    }
     public override AbstractTrainNode Clone()
     {
         return new MarkerTrainNode(message);

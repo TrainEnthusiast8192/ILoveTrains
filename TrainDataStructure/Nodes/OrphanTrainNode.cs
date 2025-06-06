@@ -1,8 +1,7 @@
-﻿
-namespace TrainDataStructure.Nodes;
+﻿namespace TrainDataStructure.Nodes;
 public abstract class OrphanTrainNode : AbstractTrainNode
 {
-    public override bool IsValueNode => false;
+    public override bool IsValueNode => true;
     public override bool IsUtilityNode => false;
     public sealed override bool IsOrphanNode => true;
     public override bool IsForking => false;

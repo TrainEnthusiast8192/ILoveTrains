@@ -11,7 +11,6 @@ public class WaitTrainNode : AbstractTrainNode
     protected readonly int millis;
 
     public override bool IsValueNode => false;
-    public override Type? GetStoredTypeOrDefault() => default;
     public override bool IsUtilityNode => true;
     public override bool IsOrphanNode => false;
     public override bool IsForking => false;
