@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.Nodes.Standard;
-public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObject, ITrainSignalReceiver
+public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObject, ITrainSignalReceiver, IDisposable
 {
     public const string BRANCH_END = "END_OF_BRANCH";
 
@@ -69,10 +69,14 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         this.train = train;
         IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
     }
-
     ~SwitchTrainNode()
     {
         IUniquelyIdentifiableTrainObject.ReturnID(this);
+    }
+    public void Dispose()
+    {
+        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        GC.SuppressFinalize(this);
     }
 
     public override int CompareTo(object? obj)
