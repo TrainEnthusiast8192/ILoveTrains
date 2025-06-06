@@ -1,7 +1,5 @@
 ﻿global using System;
 global using System.Collections.Generic;
-global using System.Text;
-global using System.Text.RegularExpressions;
 global using TrainDataStructure.Internal;
 global using TrainDataStructure.Nodes.Interfacing;
 global using TrainDataStructure.Nodes.Standard;
