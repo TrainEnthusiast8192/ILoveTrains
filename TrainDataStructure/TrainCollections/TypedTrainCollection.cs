@@ -117,18 +117,18 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract List<T?> this[Range range, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
 
     // Explicitly-Inferred Indexers
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node] { get; set; }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node] { get; set; }
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node] { get; set; }
-    public abstract T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
-    public abstract T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
-    public abstract List<T?> this[Range range, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
-    public abstract T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
-    public abstract T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
-    public abstract List<T?> this[Range range, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
+    public abstract T? this[Index index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
+    public abstract List<T?> this[Range range, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
+    public abstract T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
+    public abstract T? this[Index index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
+    public abstract List<T?> this[Range range, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
     #endregion
 
     #region Interface Boilerplate
@@ -272,18 +272,18 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public abstract List<T?> this[Range range, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
 
     // Explicitly-Inferred Indexers
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node] { get; set; }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node] { get; set; }
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.Node.node] { get; set; }
-    public abstract T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
-    public abstract T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
-    public abstract List<T?> this[Range range, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
-    public abstract T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
-    public abstract T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
-    public abstract List<T?> this[Range range, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
+    public abstract T? this[Index index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
+    public abstract List<T?> this[Range range, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get; set; }
+    public abstract T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
+    public abstract T? this[Index index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
+    public abstract List<T?> this[Range range, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get; set; }
     #endregion
 
     #region Interface Boilerplate

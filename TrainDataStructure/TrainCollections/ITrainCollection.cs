@@ -31,10 +31,10 @@ public interface ITrainCollection : IList<AbstractTrainNode>, ICollection<Abstra
 
     public abstract void CopyTo(AbstractTrainNode[] array, Index arrayIndex);
 
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
-    public abstract AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
-    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get; set; }
+    public abstract AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
+    public abstract List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get; set; }
 }

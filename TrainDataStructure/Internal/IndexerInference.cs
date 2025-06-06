@@ -1,11 +1,15 @@
 ﻿namespace TrainDataStructure.Internal;
 public static class IndexerInference
 {
-    public static readonly List<Enum> Strategies = [DIRECT, NODE];
-    public enum Direct { direct };
-    public const Direct DIRECT = Direct.direct;
-    public enum Node { node };
-    public const Node NODE = Node.node;
+    public static readonly List<Enum> ValidStrategies = [DIRECT, NODE];
 
-    public static bool IsValid(Enum strategy) => Strategies.Contains(strategy);
+    public const Strategies.Direct DIRECT = default;
+    public const Strategies.Node NODE = default;
+    public static class Strategies
+    {
+        public enum Direct;
+        public enum Node;
+    }
+
+    public static bool IsValidStrategy(Enum strategy) => ValidStrategies.Contains(strategy);
 }

@@ -707,18 +707,18 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
 
 
-    public override T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }
-    public override T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }
-    public override List<T?> this[Range range, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValues(range, []); set => _setValues(value, range, []); }
-    public override AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get => GetNodeAt(index); set => _setNode(value, index, []); }
-    public override AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get => GetNodeAt(index); set => _setNode(value, index, []); }
-    public override List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE] { get => GetNodesAt(range); set => _setNodes(value, range, []); }
-    public override T? this[int index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get => _getValue(index, signalsToSendBeforeAccess); set => _setValue(value, index, signalsToSendBeforeAccess); }
-    public override T? this[Index index, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get => _getValue(index, signalsToSendBeforeAccess); set => _setValue(value, index, signalsToSendBeforeAccess); }
-    public override List<T?> this[Range range, IndexerInference.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get => _getValues(range, signalsToSendBeforeAccess); set => _setValues(value, range, signalsToSendBeforeAccess); }
-    public override AbstractTrainNode? this[int index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get => _getNode(index, signalsBeforeAccess); set => _setNode(value, index, signalsBeforeAccess); }
-    public override AbstractTrainNode? this[Index index, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get => _getNode(index, signalsBeforeAccess); set => _setNode(value, index, signalsBeforeAccess); }
-    public override List<AbstractTrainNode> this[Range range, IndexerInference.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get => _getNodes(range, signalsBeforeAccess); set => _setNodes(value, range, signalsBeforeAccess); }
+    public override T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }
+    public override T? this[Index index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }
+    public override List<T?> this[Range range, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValues(range, []); set => _setValues(value, range, []); }
+    public override AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get => GetNodeAt(index); set => _setNode(value, index, []); }
+    public override AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get => GetNodeAt(index); set => _setNode(value, index, []); }
+    public override List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE] { get => GetNodesAt(range); set => _setNodes(value, range, []); }
+    public override T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get => _getValue(index, signalsToSendBeforeAccess); set => _setValue(value, index, signalsToSendBeforeAccess); }
+    public override T? this[Index index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get => _getValue(index, signalsToSendBeforeAccess); set => _setValue(value, index, signalsToSendBeforeAccess); }
+    public override List<T?> this[Range range, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT, params TrainSignal[] signalsToSendBeforeAccess] { get => _getValues(range, signalsToSendBeforeAccess); set => _setValues(value, range, signalsToSendBeforeAccess); }
+    public override AbstractTrainNode? this[int index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get => _getNode(index, signalsBeforeAccess); set => _setNode(value, index, signalsBeforeAccess); }
+    public override AbstractTrainNode? this[Index index, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get => _getNode(index, signalsBeforeAccess); set => _setNode(value, index, signalsBeforeAccess); }
+    public override List<AbstractTrainNode> this[Range range, IndexerInference.Strategies.Node inferenceStrategy = IndexerInference.NODE, params TrainSignal[] signalsBeforeAccess] { get => _getNodes(range, signalsBeforeAccess); set => _setNodes(value, range, signalsBeforeAccess); }
     public override T? this[int index] { get => this[index, IndexerInference.DIRECT]; set => this[index, IndexerInference.DIRECT] = value; }
     public override T? this[Index index] { get => this[index, IndexerInference.DIRECT]; set => this[index, IndexerInference.DIRECT] = value; }
     public override List<T?> this[Range range] { get => this[range, IndexerInference.DIRECT]; set => this[range, IndexerInference.DIRECT] = value; }
