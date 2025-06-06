@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.TrainCollections;
-public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList<T?>, ICollection<T?>, IEnumerable<T?> where T : IComparable
+public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where T : IComparable
 {
     protected AbstractTrainNode? first;
     protected int count;
@@ -192,10 +192,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
 
         yield break;
     }
-
-    IEnumerator<T?> IEnumerable<T?>.GetEnumerator() => GetValues();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public override Train<M> Cast<M>() where M : default
     {
@@ -841,12 +837,4 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable, IList
             arrcnt++;
         }
     }
-
-    void IList<T?>.Insert(int index, T? item) => Insert(index, item);
-
-    void IList<T?>.RemoveAt(int index) => RemoveAt(index);
-
-    void ICollection<T?>.Add(T? item) => Add(item);
-
-    void ICollection<T?>.Clear() => Clear();
 }
