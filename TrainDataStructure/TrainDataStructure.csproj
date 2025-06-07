@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TrainDataStructure.Extensions\TrainDataStructure.Extensions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TrainDataStructure.Extensions\TrainDataStructure.Extensions.csproj" />
+	</ItemGroup>
 
 </Project>
