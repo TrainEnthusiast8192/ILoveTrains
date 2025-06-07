@@ -128,6 +128,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public static implicit operator Train<T>(T? initValue) => new(initValue);
     public static implicit operator Train<T>(AbstractTrainNode initNode) => new(initNode);
     public static implicit operator Train<T>(PreBuiltTrainStructure initStructure) => new(initStructure);
+
     ~Train()
     {
         IUniquelyIdentifiableTrainObject.ReturnID(this);
@@ -540,7 +541,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         bool ret = true;
         for (int i = 0; i < cnt; i++)
         {
-            ret &= item.Equals(GetNodeAt(i));
+            ret |= item.Equals(GetNodeAt(i));
         }
         return ret;
     }
@@ -551,7 +552,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         ValueTrainNode<T> temp = new ValueTrainNode<T>(item);
         for (int i = 0; i < cnt; i++)
         {
-            ret &= temp.EquivalentTo(GetNodeAt(i));
+            ret |= temp.EquivalentTo(GetNodeAt(i));
         }
         return ret;
     }
@@ -562,7 +563,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         ValueTrainNode<M> temp = new ValueTrainNode<M>(item);
         for (int i = 0; i < cnt; i++)
         {
-            ret &= temp.EquivalentTo(GetNodeAt(i));
+            ret |= temp.EquivalentTo(GetNodeAt(i));
         }
         return ret;
     }
