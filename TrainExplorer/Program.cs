@@ -1,18 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 
 
-Train<byte> train = new(new TestNode());
-var s = new TrainSignal([], [], false, true);
-s.OnSignalSuccess += gunc;
-train[0, IndexerInference.NODE]!.ReLink(train[0, IndexerInference.NODE]);
-train.Signal(s);
-
-train.PrintTrain();
-
-string? str = Console.ReadLine();
-
-void gunc(TrainSignal s) { Console.WriteLine("SIG"); }
-
+Train<int> train = new(40, 66, 0, 4);
+var sorted = train.Contains(0);
+Console.WriteLine(sorted.ToInt());
 
 public class TestNode : WaitTrainNode
 {
