@@ -64,7 +64,7 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
 
     public override int CompareTo(object? obj)
     {
-        return obj is ValueTrainNode<T> vnode && vnode.value is not null ? vnode.value.CompareTo(value) : 1;
+        return obj is ValueTrainNode<T> vnode && value is not null ? value.CompareTo(vnode.value) : 1;
     }
 
     public override bool EquivalentTo(AbstractTrainNode? node)
