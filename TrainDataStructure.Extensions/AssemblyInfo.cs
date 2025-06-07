@@ -2,4 +2,4 @@
 
 [assembly: InternalsVisibleTo("TrainExplorer")]
 [assembly: InternalsVisibleTo("TrainTester")]
-[assembly: InternalsVisibleTo("TrainDataStructure.Extensions")]
+[assembly: InternalsVisibleTo("TrainDataStructure")]
