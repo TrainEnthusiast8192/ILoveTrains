@@ -3,6 +3,7 @@ global using System.Collections;
 global using System.Collections.Generic;
 global using System.Text.RegularExpressions;
 global using TrainDataStructure.Internal;
+global using TrainDataStructure.Internal.Extensions;
 global using TrainDataStructure.Nodes.Interfacing;
 global using TrainDataStructure.Nodes.Standard;
 global using TrainDataStructure.Nodes.Utility;
