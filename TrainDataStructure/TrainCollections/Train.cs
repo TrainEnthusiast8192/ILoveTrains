@@ -11,7 +11,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override bool EnforcesTypeSafety => false;
     public override bool IsReadOnly => false;
 
-    public override bool IsCached => true;
+    public override bool IsCached => cache is not null;
     public StandardTrainCache<T>? cache;
     public override ITrainCollectionCache? GetCacheView() => cache?.GetView() ?? null;
 
@@ -753,15 +753,18 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         }
         return ret;
     }
+
+    protected static readonly ValueTrainNode<T> INDEXOF_COMPARISON_DUMMY = new ValueTrainNode<T>();
     public override int IndexOf(T? item)
     {
         if (item is not null && (cache?.IndexOfValue.ContainsKey(item) ?? false)) { return cache.IndexOfValue[item]; }
         int cnt = GetBranchLength();
         int ret = -1;
-        ValueTrainNode<T> temp = new ValueTrainNode<T>(item);
+        INDEXOF_COMPARISON_DUMMY.SetValue(item);
+
         for (int i = 0; i < cnt; i++)
         {
-            if (temp.EquivalentTo(GetNodeAt(i)))
+            if (INDEXOF_COMPARISON_DUMMY.EquivalentTo(GetNodeAt(i)))
             {
                 ret = i;
                 if (item is not null) { cache?.IndexOfValue.Add(item, i); }
@@ -907,7 +910,9 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Signal(TrainSignal signal)
     {
-        return first?.Signal(signal, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) ?? false;
+        bool ret = first?.Signal(signal, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) ?? false;
+        if (ret) { cache?.Invalidate(); }
+        return ret;
     }
 
     public override bool Signal(params TrainSignal[] signals)
