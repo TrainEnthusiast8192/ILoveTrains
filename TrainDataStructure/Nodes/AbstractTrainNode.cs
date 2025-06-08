@@ -2,7 +2,7 @@
 public abstract class AbstractTrainNode : IComparable, ICloneable
 {
     protected readonly Guid INTERNAL_CONNECTIONS_GUID = new Guid();
-    public const char SERIALIZATION_SEPARATOR = 'º';
+    public const char SERIALIZATION_SEPARATOR = '\u2065'; // U+2065 is "Invisible operators - undefined", which seems to have no use
     protected static void NodeEventsConstructor() { }
     public delegate void NodeEvents();
     public NodeEvents OnAdded = NodeEventsConstructor;
