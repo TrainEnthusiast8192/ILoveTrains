@@ -18,12 +18,19 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override AbstractTrainNode? GetFirst() => first;
 
     // STANDARD CONSTRUCTORS
+    /// <summary>
+    /// Initializes a new Train object with no nodes and an auto-generated ID
+    /// </summary>
     public Train() : base()
     {
         first = null;
         count = 0;
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
     }
+    /// <summary>
+    /// Initializes a new Train object with no nodes and a given ID
+    /// </summary>
+    /// <param name="forceID">Unique integer ID</param>
     protected Train(int forceID) : base()
     {
         first = null;
@@ -33,6 +40,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
 
     // NODE CONSTRUCTORS
+    /// <summary>
+    /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
+    /// </summary>
+    /// <param name="initNodes">Collection of existing node instances</param>
     public Train(params AbstractTrainNode?[] initNodes) : base(initNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -41,6 +52,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             if (n is not null) { Add(n); }
         }
     }
+    /// <summary>
+    /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
+    /// </summary>
+    /// <param name="initNodes">Collection of existing node instances</param>
     public Train(IEnumerable<AbstractTrainNode> initNodes) : base(initNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -49,6 +64,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             if (n is not null) { Add(n); }
         }
     }
+    /// <summary>
+    /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
+    /// </summary>
+    /// <param name="initNodes">Collection of existing node instances</param>
     public Train(Span<AbstractTrainNode> initNodes) : base(initNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -59,6 +78,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
 
     // VALUE CONSTRUCTORS
+    /// <summary>
+    /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
+    /// </summary>
+    /// <param name="initValues">Collection of values</param>
     public Train(params T?[] initValues) : base(initValues)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -67,6 +90,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             Add(val);
         }
     }
+    /// <summary>
+    /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
+    /// </summary>
+    /// <param name="initValues">Collection of values</param>
     public Train(IEnumerable<T?> initValues) : base(initValues)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -75,6 +102,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             Add(val);
         }
     }
+    /// <summary>
+    /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
+    /// </summary>
+    /// <param name="initValues">Collection of values</param>
     public Train(Span<T> initValues) : base(initValues)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -85,6 +116,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
 
     // DYNAMIC CONSTRUCTORS
+    /// <summary>
+    /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
+    /// </summary>
+    /// <param name="initValuesAndNodes">Collection of values and nodes</param>
     public Train(params object?[] initValuesAndNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -96,6 +131,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
     }
+    /// <summary>
+    /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
+    /// </summary>
+    /// <param name="initValuesAndNodes">Collection of values and nodes</param>
     public Train(IEnumerable<object?> initValuesAndNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -107,6 +146,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
     }
+    /// <summary>
+    /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
+    /// </summary>
+    /// <param name="initValuesAndNodes">Collection of values and nodes</param>
     public Train(Span<object?> initValuesAndNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
@@ -120,20 +163,44 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
 
     // OTHER CONSTRUCTORS
+    /// <summary>
+    /// Initializes a new Train object with the given structure using a pre-built substructure and an auto-generated ID
+    /// </summary>
+    /// <param name="initStructure">Structure to add</param>
     public Train(PreBuiltTrainStructure initStructure) : base(initStructure)
     {
+        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         Add(initStructure);
     }
 
-    public static implicit operator Train<T>(T? initValue) => new(initValue);
-    public static implicit operator Train<T>(AbstractTrainNode initNode) => new(initNode);
+    /// <summary>
+    /// Initializes a new Train object with the given value wrapped in a value node and an auto-generated ID
+    /// </summary>
+    /// <param name="initValue">First value</param>
+    public static implicit operator Train<T>(T? initValue) => new(initValues: initValue);
+    /// <summary>
+    /// Initializes a new Train object with the given pre-existing node and an auto-generated ID
+    /// </summary>
+    /// <param name="initNode">First node</param>
+    public static implicit operator Train<T>(AbstractTrainNode initNode) => new(initNodes: initNode);
+    /// <summary>
+    /// Initializes a new Train object with the given pre-built structure and an auto-generated ID
+    /// </summary>
+    /// <param name="initStructure">Structure to add</param>
     public static implicit operator Train<T>(PreBuiltTrainStructure initStructure) => new(initStructure);
 
+    /// <summary>
+    /// Returns the Train's ID to the set of possible IDs
+    /// </summary>
     ~Train()
     {
         IUniquelyIdentifiableTrainObject.ReturnID(this);
     }
 
+    /// <summary>
+    /// Lazily evaluates the nodes in the currently active branch
+    /// </summary>
+    /// <returns>Enumerator of nodes</returns>
     public override IEnumerator<AbstractTrainNode> GetEnumerator()
     {
         AbstractTrainNode? curr = first;
@@ -146,6 +213,11 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
         yield break;
     }
+    /// <summary>
+    /// Sends signals and then lazily evaluates the currently active branch
+    /// </summary>
+    /// <param name="signalsToSendBeforeStartingEnumeration">Sent in the given order, all at the beginning</param>
+    /// <returns>Enumerator of nodes</returns>
     public override IEnumerator<AbstractTrainNode> GetEnumerator(params TrainSignal[] signalsToSendBeforeStartingEnumeration)
     {
         Signal(signalsToSendBeforeStartingEnumeration);
@@ -161,6 +233,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         yield break;
     }
 
+    /// <summary>
+    /// Lazily evaluates the currently active branch as values, skipping utility nodes
+    /// </summary>
+    /// <returns>Enumerator of T? values</returns>
     public override IEnumerator<T?> GetValues()
     {
         AbstractTrainNode? curr = first;
@@ -176,6 +252,11 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
         yield break;
     }
+    /// <summary>
+    /// Sends signals and then lazily evaluates the currently active branch as values, skipping utility nodes
+    /// </summary>
+    /// <param name="signalsToSendBeforeStartingEnumeration">Sent in the given order, all at the beginning</param>
+    /// <returns>Enumerator of T? values</returns>
     public override IEnumerator<T?> GetValues(params TrainSignal[] signalsToSendBeforeStartingEnumeration)
     {
         Signal(signalsToSendBeforeStartingEnumeration);
@@ -194,6 +275,12 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         yield break;
     }
 
+    /// <summary>
+    /// Creates a new view of the train under the new type
+    /// Does not copy any nodes
+    /// </summary>
+    /// <typeparam name="M">New view type</typeparam>
+    /// <returns>New Train object under type <typeparamref name="M"/> with the same underlying node structure </returns>
     public override Train<M> Cast<M>() where M : default
     {
         Train<M> ret = new Train<M>(SUUID);
@@ -202,14 +289,47 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         return ret;
     }
 
-    public Train<T> Clone() => new Train<T>(first);
-    public int CompareTo(object? obj) => obj is Train<T> other ? other.GetFirst()?.CompareTo(GetFirst()) ?? 1 : 1;
+    /// <summary>
+    /// Creates a shallow copy of the train pointing to the same head node
+    /// </summary>
+    /// <returns>Shallow clone of this Train</returns>
+    public Train<T> Clone()
+    {
+        Train<T> ret = new Train<T>(SUUID);
+        ret.count = count;
+        ret.first = first;
+        return ret;
+    }
+    /// <summary>
+    /// Compares the first node of each Train
+    /// </summary>
+    /// <param name="obj">Non-Empty Train</param>
+    /// <returns>1 if obj is not a Train or it is empty; else, comparison between first nodes</returns>
+    public int CompareTo(object? obj) => obj is Train<T> other ? GetFirst()?.CompareTo(other.GetFirst()) ?? 1 : 1;
 
+    /// <summary>
+    /// Wraps the value in a value node and attempts to add it
+    /// </summary>
+    /// <param name="value">Value to add</param>
+    /// <returns>Success / Failure</returns>
     public override bool Add(T? value) => Add(new ValueTrainNode<T>(value));
+    /// <summary>
+    /// Handles external addition called from the base abstract class member AddExternal of <typeparamref name="M"/>.
+    /// Wraps the value in a value and attempts to add it
+    /// </summary>
+    /// <typeparam name="M">Type being added</typeparam>
+    /// <param name="value">Value to be added</param>
+    /// <returns>Succes / Failure</returns>
     protected override bool HandleAddExternal<M>(M? value) where M : default 
     {
         return Add(new ValueTrainNode<M>(value));
     }
+    /// <summary>
+    /// Adds a node at the end of the currently active branch.
+    /// Activates OnAdded and OnAddedAsFirst (where appropriate)
+    /// </summary>
+    /// <param name="node">Pre-existing node to be added</param>
+    /// <returns>Success / Failure</returns>
     public override bool Add(AbstractTrainNode node)
     {
         if (first is null)
@@ -230,6 +350,11 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         if (ret) { count++; }
         return ret;
     }
+    /// <summary>
+    /// Adds the first node to the end of the Train, which drags previous connections forward
+    /// </summary>
+    /// <param name="structure">Structure to add</param>
+    /// <returns>Success / Failure</returns>
     public override bool Add(PreBuiltTrainStructure structure)
     {
         bool ret = Add(structure.first);
