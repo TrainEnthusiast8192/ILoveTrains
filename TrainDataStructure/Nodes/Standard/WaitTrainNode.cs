@@ -34,12 +34,12 @@ public class WaitTrainNode : AbstractTrainNode
 
     public override int CompareTo(object? obj)
     {
-        return obj is WaitTrainNode n ? n.millis.CompareTo(millis) : 0;
+        return obj is WaitTrainNode n ? n.millis.CompareTo(millis) : 1;
     }
 
     public override bool EquivalentTo(AbstractTrainNode? node)
     {
-        return node is WaitTrainNode n ? n.millis.Equals(millis) : false;
+        return node is WaitTrainNode n && n.millis.Equals(millis);
     }
 
     public override bool Equals(object? obj)
@@ -50,6 +50,10 @@ public class WaitTrainNode : AbstractTrainNode
     public override string ToString()
     {
         return $"WaitTrainNode : {millis}";
+    }
+    public override string Serialize()
+    {
+        return $"WaitTrainNode{SERIALIZATION_SEPARATOR}{millis}{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}";
     }
 
     public override int GetHashCode()
