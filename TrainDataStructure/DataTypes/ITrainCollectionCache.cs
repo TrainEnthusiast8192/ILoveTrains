@@ -1,3 +1,5 @@
 ﻿namespace TrainDataStructure.DataTypes;
-// TO-DO
-public interface ITrainCollectionCache;
+public interface ITrainCollectionCache
+{
+    public abstract ITrainCollectionCache GetView();
+}
