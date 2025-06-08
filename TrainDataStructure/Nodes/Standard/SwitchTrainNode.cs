@@ -96,6 +96,10 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
     {
         return $"SwitchTrainNode ID({id}) : " + (ForkLeft ? "Pointing LEFT" : "Pointing RIGHT");
     }
+    public override string Serialize()
+    {
+        return $"SwitchTrainNode{SERIALIZATION_SEPARATOR}{id}{SERIALIZATION_SEPARATOR}{ForkLeft}{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}";
+    }
 
     public override int GetHashCode()
     {

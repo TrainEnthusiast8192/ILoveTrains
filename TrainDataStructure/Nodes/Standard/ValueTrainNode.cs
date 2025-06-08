@@ -123,6 +123,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     {
         return $"ValueTrainNode<{typeof(T)}> : {value}";
     }
+    public override string Serialize()
+    {
+        return $"ValueTrainNode{SERIALIZATION_SEPARATOR}{typeof(T?)}{SERIALIZATION_SEPARATOR}{value}{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}";
+    }
 
     protected override TrainOperations HandleAddition(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)
     {

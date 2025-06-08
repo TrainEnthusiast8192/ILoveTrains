@@ -84,4 +84,8 @@ public class MarkerTrainNode : OrphanTrainNode
     {
         return "MARKER: " + message;
     }
+    public override string Serialize()
+    {
+        return $"MarkerTrainNode{SERIALIZATION_SEPARATOR}{message.Replace(SERIALIZATION_SEPARATOR.ToString(), "")}{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}";
+    }
 }
