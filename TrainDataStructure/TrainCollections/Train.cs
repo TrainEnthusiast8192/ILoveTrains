@@ -613,7 +613,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         bool ret = true;
         for (int i = start; i < end; i++)
         {
-            ret &= Insert(i, value[arrCnt]);
+            ret &= Insert(i, values[arrCnt]);
             arrCnt++;
         }
 
