@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainTester", "TrainTester\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainDataStructure.Extensions", "TrainDataStructure.Extensions\TrainDataStructure.Extensions.csproj", "{4C42338C-9968-4CCF-8DF7-08E81CA3FEA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainBenchmarks", "TrainBenchmarks\TrainBenchmarks.csproj", "{3610BC93-A18A-40DF-A6B2-44605382037A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4C42338C-9968-4CCF-8DF7-08E81CA3FEA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C42338C-9968-4CCF-8DF7-08E81CA3FEA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C42338C-9968-4CCF-8DF7-08E81CA3FEA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3610BC93-A18A-40DF-A6B2-44605382037A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3610BC93-A18A-40DF-A6B2-44605382037A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3610BC93-A18A-40DF-A6B2-44605382037A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3610BC93-A18A-40DF-A6B2-44605382037A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
