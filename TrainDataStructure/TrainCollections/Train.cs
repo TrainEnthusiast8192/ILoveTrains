@@ -12,7 +12,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override bool IsReadOnly => false;
 
     public override bool IsCached => cache is not null;
-    public StandardTrainCache<T>? cache;
+    public StandardTrainCache<T>? cache = new();
     public override ITrainCollectionCache? GetCacheView() => cache?.GetView() ?? null;
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
@@ -29,7 +29,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         first = null;
         count = 0;
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with no nodes and a given ID
@@ -41,7 +41,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         count = 0;
         SUUID = forceID;
         IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
-        cache = new();
+         
     }
 
     // NODE CONSTRUCTORS
@@ -56,7 +56,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(n);
         }
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
@@ -69,7 +69,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(n);
         }
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
@@ -82,7 +82,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
-        cache = new();
+         
     }
 
     // VALUE CONSTRUCTORS
@@ -97,7 +97,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
@@ -110,7 +110,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
@@ -123,7 +123,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
-        cache = new();
+         
     }
 
     // DYNAMIC CONSTRUCTORS
@@ -141,7 +141,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
@@ -157,7 +157,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
-        cache = new();
+         
     }
     /// <summary>
     /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
@@ -173,7 +173,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
-        cache = new();
+         
     }
 
     // OTHER CONSTRUCTORS
@@ -185,7 +185,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         Add(initStructure);
-        cache = new();
+         
     }
 
     /// <summary>
