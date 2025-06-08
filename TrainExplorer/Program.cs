@@ -7,6 +7,9 @@ Train<int> train = new(40, 66, 0, 4);
 var sorted = train.Contains(0);
 Console.WriteLine(sorted.ToInt());
 
+StandardTrainCacheView<int> cache = (StandardTrainCacheView<int>)train.GetCacheView()!;
+cache.Deconstruct(out int cnt, out bool cntValid, out var Dic1, out var Dic2, out var Dic3);
+
 public class TestNode : WaitTrainNode
 {
     public TestNode() : base(100) { }

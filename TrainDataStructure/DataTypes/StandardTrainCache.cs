@@ -35,4 +35,13 @@ public readonly struct StandardTrainCacheView<T>(StandardTrainCache<T> cache) : 
     public readonly FrozenDictionary<int, AbstractTrainNode> GetNodeAt = cache.GetNodeAt.ToFrozenDictionary();
 
     public readonly ITrainCollectionCache GetView() => this;
+
+    public void Deconstruct(out int cnt, out bool cntValid, out FrozenDictionary<AbstractTrainNode, int> indexof, out FrozenDictionary<T, int> indexofval, out FrozenDictionary<int, AbstractTrainNode> getat)
+    {
+        cnt = BranchCount;
+        cntValid = BranchCountCached;
+        indexof = IndexOf;
+        indexofval = IndexOfValue;
+        getat = GetNodeAt;
+    }
 }
