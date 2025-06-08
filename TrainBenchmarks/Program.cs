@@ -17,4 +17,12 @@ BenchmarkRunner.Run<TrainLookupBenchmarks>();
 //| LookupUsingGetNodeAt | 1.642 ms | 0.2266 ms | 0.6680 ms | 1.466 ms | - |
 //| LookupUsingIndexOfNode | 572.726 ms | 77.3510 ms | 228.0712 ms | 642.443 ms | 400 B |
 //| LookupUsingIndexOfValue | 427.752 ms | 30.1201 ms | 86.4201 ms | 391.259 ms | 176200 B |
-//| RepeatedBranchLength | 24.602 ms | 0.4773 ms | 0.7571 ms | 24.617 ms | 12 B |<
+//| RepeatedBranchLength | 24.602 ms | 0.4773 ms | 0.7571 ms | 24.617 ms | 12 B |
+
+/// NO CACHING (FIXED)
+//| Method                  | Mean       | Error      | StdDev      | Median      | Allocated |
+//| ------------------------ | -----------:| -----------:| ------------:| ------------:| ----------:|
+//| LookupUsingGetNodeAt | 1.117 ms | 0.0900 ms | 0.2653 ms | 0.9939 ms | 1 B |
+//| LookupUsingIndexOfNode | 413.869 ms | 38.1031 ms | 112.3479 ms | 394.0701 ms | 200 B |
+//| LookupUsingIndexOfValue | 270.303 ms | 5.2996 ms | 8.0931 ms | 266.1439 ms | 200 B |
+//| RepeatedBranchLength | 17.740 ms | 0.3739 ms | 1.0361 ms | 17.3431 ms | 12 B |
