@@ -486,7 +486,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override List<string> RawPrintBranch(bool printToConsole = true)
     {
-        List<string> ret = new List<string>();
+        List<string> ret = new List<string>(GetBranchLength());
         foreach (AbstractTrainNode n in RawBranchCollapse())
         {
             string ns = n.ToString();
@@ -499,7 +499,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override List<string> RawPrintTrain(bool printToConsole = true)
     {
-        List<string> ret = new List<string>();
+        List<string> ret = new List<string>(count);
         foreach (AbstractTrainNode n in RawCollapse())
         {
             string ns = n.ToString();
@@ -547,7 +547,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override bool Remove(params AbstractTrainNode[] nodes)
     {
         bool ret = true;
-
+        
         foreach (AbstractTrainNode n in nodes)
         {
             ret &= Remove(n);
@@ -579,7 +579,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Insert(Index index, T? value) => Insert(index.GetOffset(GetBranchLength()), value);
 
-    public override bool Insert(Range range, params T?[] value)
+    public override bool Insert(Range range, params T?[] values)
     {
         int cnt = GetBranchLength();
         int start = range.Start.GetOffset(cnt);
@@ -589,7 +589,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         bool ret = true;
         for (int i = start; i < end; i++)
         {
-            ret &= Insert(i, value[arrCnt]);
+            ret &= Insert(i, values[arrCnt]);
             arrCnt++;
         }
 
@@ -603,7 +603,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Insert<M>(Index index, M? value) where M : default => Insert(index.GetOffset(GetBranchLength()), value);
 
-    public override bool Insert<M>(Range range, params M?[] value) where M : default
+    public override bool Insert<M>(Range range, params M?[] values) where M : default
     {
         int cnt = GetBranchLength();
         int start = range.Start.GetOffset(cnt);
@@ -643,7 +643,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Insert(Index index, AbstractTrainNode node) => Insert(index.GetOffset(GetBranchLength()), node);
 
-    public override bool Insert(Range range, AbstractTrainNode[] nodes)
+    public override bool Insert(Range range, params AbstractTrainNode[] nodes)
     {
         int cnt = GetBranchLength();
         int start = range.Start.GetOffset(cnt);
@@ -737,7 +737,14 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         }
         return ret;
     }
-
+    /// <summary>
+    /// Copies the Train's nodes in order onto an existing array at the index position.
+    /// Includes utility nodes
+    /// </summary>
+    /// <param name="array">Pre-existing array of nodes</param>
+    /// <param name="arrayIndex">First index that will change</param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public override void CopyTo(AbstractTrainNode[] array, int arrayIndex)
     {
         List<AbstractTrainNode> branch = RawBranchCollapse();
@@ -753,9 +760,32 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             listCounter++;
         }
     }
+    /// <summary>
+    /// Copies the Train's nodes in order onto an existing array at index 0.
+    /// Includes utility nodes
+    /// </summary>
+    /// <param name="array">Pre-existing array of nodes</param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public override void CopyTo(AbstractTrainNode[] array) => CopyTo(array, 0);
+    /// <summary>
+    /// Copies the Train's nodes in order onto an existing array at the index position.
+    /// Includes utility nodes
+    /// </summary>
+    /// <param name="array">Pre-existing array of nodes</param>
+    /// <param name="arrayIndex">First index that will change (can be calculated from the back)</param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public override void CopyTo(AbstractTrainNode[] array, Index arrayIndex) => CopyTo(array, arrayIndex.GetOffset(GetBranchLength()));
 
+    /// <summary>
+    /// Copies the Train's values in order onto an existing array at the index position.
+    /// Skips utility nodes as if they don't exist
+    /// </summary>
+    /// <param name="array">Pre-existing array of <typeparamref name="T"/></param>
+    /// <param name="arrayIndex">First index that will change</param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public void CopyTo(T?[] array, int arrayIndex)
     {
         List<AbstractTrainNode> branch = RawBranchCollapse();
@@ -764,22 +794,32 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         if (arrayIndex >= cnt || arrayIndex < 0) { throw new IndexOutOfRangeException($"Index {arrayIndex} was outside the bounds of the given array"); }
         if (cnt - arrayIndex < branch.Count) { throw new ArgumentException($"The number of elements in the source {branch.Count} is greater than the available space from {arrayIndex} to the end of the destination array."); }
 
-        int listCounter = 0;
-        for (int i = arrayIndex; i < cnt; i++)
+        int arrIndex = arrayIndex;
+        for (int L = 0; L < branch.Count; L++)
         {
-            if (branch[listCounter] is ValueTrainNode<T> vnode)
+            if (branch[L] is ValueTrainNode<T> vnode)
             {
-                array[i] = vnode.GetValue();
+                array[arrIndex] = vnode.GetValue();
+                arrIndex++;
             }
-            else
-            {
-                i--;
-            }
-
-            listCounter++;
         }
     }
+    /// <summary>
+    /// Copies the Train's values in order onto an existing array at index 0.
+    /// Skips utility nodes as if they don't exist
+    /// </summary>
+    /// <param name="array">Pre-existing array of <typeparamref name="T"/></param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public void CopyTo(T?[] array) => CopyTo(array, 0);
+    /// <summary>
+    /// Copies the Train's values in order onto an existing array at the index position.
+    /// Skips utility nodes as if they don't exist
+    /// </summary>
+    /// <param name="array">Pre-existing array of <typeparamref name="T"/></param>
+    /// <param name="arrayIndex">First index that will change (can be calculated from the back)</param>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public void CopyTo(T?[] array, Index arrayIndex) => CopyTo(array, arrayIndex.GetOffset(GetBranchLength()));
 
     public override bool ReplaceAt(int index, T? newValue)
