@@ -22,6 +22,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract bool EnforcesTypeSafety { get; }
     public abstract bool IsReadOnly { get; }
     public abstract bool IsCached { get; }
+    public abstract ITrainCollectionCache? GetCacheView();
 
     public abstract int GetID();
     public abstract AbstractTrainNode? GetFirst();
@@ -172,6 +173,7 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public abstract bool EnforcesTypeSafety { get; }
     public abstract bool IsReadOnly { get; }
     public abstract bool IsCached { get; }
+    public abstract ITrainCollectionCache? GetCacheView();
 
     public abstract int GetID();
     public abstract AbstractTrainNode? GetFirst();

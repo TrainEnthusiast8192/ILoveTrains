@@ -11,6 +11,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override bool EnforcesTypeSafety => false;
     public override bool IsReadOnly => false;
     public override bool IsCached => false;
+    public override ITrainCollectionCache? GetCacheView() => null;
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
     public override int GetHashCode() => SUUID;

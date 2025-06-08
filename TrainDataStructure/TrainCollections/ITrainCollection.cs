@@ -5,6 +5,7 @@ public interface ITrainCollection : IList<AbstractTrainNode>, ICollection<Abstra
     public abstract int GetTotalCount();
     public abstract int GetBranchLength();
     public abstract bool IsCached { get; }
+    public abstract ITrainCollectionCache? GetCacheView();
 
     public abstract List<AbstractTrainNode> Collapse();
     public abstract List<AbstractTrainNode> BranchCollapse();
