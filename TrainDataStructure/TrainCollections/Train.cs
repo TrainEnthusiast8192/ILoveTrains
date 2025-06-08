@@ -596,11 +596,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         return ret;
     }
 
-    public override bool Insert<M>(int index, M? value) where M : default
-    {
-        return Insert(index, node: new ValueTrainNode<M>(value));
-    }
-
+    public override bool Insert<M>(int index, M? value) where M : default => Insert(index, node: new ValueTrainNode<M>(value));
     public override bool Insert<M>(Index index, M? value) where M : default => Insert(index.GetOffset(GetBranchLength()), value);
 
     public override bool Insert<M>(Range range, params M?[] values) where M : default
