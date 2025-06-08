@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.TrainCollections;
-public abstract class TypedTrainCollection<T> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>, IDisposable
+public abstract class TypedTrainCollection<T> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
 {
     // Constructors
     public TypedTrainCollection() { }
@@ -11,11 +11,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public TypedTrainCollection(Span<T> initValues) { }
     public TypedTrainCollection(PreBuiltTrainStructure initStructure) { }
     ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
-    public void Dispose()
-    {
-        IUniquelyIdentifiableTrainObject.ReturnID(this);
-        GC.SuppressFinalize(this);
-    }
+    public abstract void Dispose();
 
     // Standard information
     public abstract int Count { get; }
@@ -149,7 +145,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>, IDisposable
+public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
 {
     // Constructors
     public TypedTrainCollection() { }
@@ -162,11 +158,7 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public TypedTrainCollection(Span<T> initValues) { }
 
     ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
-    public void Dispose()
-    {
-        IUniquelyIdentifiableTrainObject.ReturnID(this);
-        GC.SuppressFinalize(this);
-    }
+    public abstract void Dispose();
 
     // Standard information
     public abstract int Count { get; }
