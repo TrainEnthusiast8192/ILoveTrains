@@ -10,8 +10,10 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override int GetTotalCount() => count;
     public override bool EnforcesTypeSafety => false;
     public override bool IsReadOnly => false;
-    public override bool IsCached => false;
-    public override ITrainCollectionCache? GetCacheView() => null;
+
+    public override bool IsCached => true;
+    public StandardTrainCache<T>? cache;
+    public override ITrainCollectionCache? GetCacheView() => cache?.GetView() ?? null;
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
     public override int GetHashCode() => SUUID;
@@ -27,6 +29,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         first = null;
         count = 0;
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with no nodes and a given ID
@@ -38,6 +41,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         count = 0;
         SUUID = forceID;
         IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
+        cache = new();
     }
 
     // NODE CONSTRUCTORS
@@ -45,13 +49,14 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
     /// </summary>
     /// <param name="initNodes">Collection of existing node instances</param>
-    public Train(params AbstractTrainNode?[] initNodes) : base(initNodes)
+    public Train(params AbstractTrainNode[] initNodes) : base(initNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
-        foreach (AbstractTrainNode? n in initNodes)
+        foreach (AbstractTrainNode n in initNodes)
         {
-            if (n is not null) { Add(n); }
+            Add(n);
         }
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
@@ -60,10 +65,11 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public Train(IEnumerable<AbstractTrainNode> initNodes) : base(initNodes)
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
-        foreach (AbstractTrainNode? n in initNodes)
+        foreach (AbstractTrainNode n in initNodes)
         {
-            if (n is not null) { Add(n); }
+            Add(n);
         }
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with the given nodes added in order and an auto-generated ID
@@ -76,6 +82,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
+        cache = new();
     }
 
     // VALUE CONSTRUCTORS
@@ -90,6 +97,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
@@ -102,6 +110,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with the given values wrapped in value nodes added in order and an auto-generated ID
@@ -114,6 +123,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             Add(val);
         }
+        cache = new();
     }
 
     // DYNAMIC CONSTRUCTORS
@@ -131,6 +141,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
@@ -146,6 +157,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
+        cache = new();
     }
     /// <summary>
     /// Initializes a new Train object with the given objects, which may be existing nodes or values to be wrapped into new nodes
@@ -161,6 +173,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             else if (n is IComparable comp) { AddExternal(comp); }
             else { throw new ArgumentException($"Invalid addition: Item {n} is not a valid value, node or comparable"); }
         }
+        cache = new();
     }
 
     // OTHER CONSTRUCTORS
@@ -172,6 +185,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     {
         SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
         Add(initStructure);
+        cache = new();
     }
 
     /// <summary>
@@ -196,6 +210,13 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     ~Train()
     {
         IUniquelyIdentifiableTrainObject.ReturnID(this);
+        cache = null;
+    }
+    public override void Dispose()
+    {
+        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        cache = null;
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -344,11 +365,22 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
             count = 1;
 
+            if (cache is not null)
+            {
+                cache.IndexOf.Add(node, 0);
+                cache.BranchCount = 1;
+                cache.BranchCountCached = true;
+            }
+
             return true;
         }
 
         bool ret = first.AddNode(node, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS);
-        if (ret) { count++; }
+        if (ret)
+        {
+            count++;
+            cache?.Invalidate();
+        }
         return ret;
     }
     /// <summary>
@@ -387,6 +419,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override int GetBranchLength()
     {
+        if (cache?.BranchCountCached ?? false) { return cache.BranchCount; }
         int counter = 0;
         AbstractTrainNode? current = first;
         while (current is not null)
@@ -395,11 +428,15 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             counter++;
         }
 
+        cache?.BranchCount = counter;
+        cache?.BranchCountCached = true;
+
         return counter;
     }
 
     public override AbstractTrainNode GetNodeAt(int index)
     {
+        if (cache?.GetNodeAt.ContainsKey(index) ?? false) { return cache.GetNodeAt[index]; }
         AbstractTrainNode? current = first;
         
         for (int i = 0; i < index; i++)
@@ -540,6 +577,8 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
                 first = next;
             }
             count--;
+
+            cache?.Invalidate();
         }
         return ret;
     }
@@ -619,11 +658,17 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Insert(int index, AbstractTrainNode node)
     {
-        return index == 0 ? _insertAtHead(node) 
+        bool ret = index == 0 ? _insertAtHead(node) 
             : first?.InsertNode(node, index, new Stack<AbstractTrainNode>()).Is(TrainOperations.SUCCESS) 
             ?? throw new IndexOutOfRangeException($"Index {index} was non-zero for insertion on empty train");
+
+        if (ret)
+        {
+            cache?.Invalidate();
+        }
+        return ret;
     }
-    protected bool _insertAtHead(AbstractTrainNode node)
+    protected virtual bool _insertAtHead(AbstractTrainNode node)
     {
         first?.ReParent(node);
 
@@ -659,6 +704,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Contains(AbstractTrainNode item)
     {
+        if (cache?.IndexOf.ContainsKey(item) ?? false) { return true; }
         int cnt = GetBranchLength();
         bool ret = true;
         for (int i = 0; i < cnt; i++)
@@ -669,6 +715,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
     public override bool Contains(T? item)
     {
+        if (item is not null && (cache?.IndexOfValue.ContainsKey(item) ?? false)) { return true; }
         int cnt = GetBranchLength();
         bool ret = true;
         ValueTrainNode<T> temp = new ValueTrainNode<T>(item);
@@ -692,6 +739,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override int IndexOf(AbstractTrainNode item)
     {
+        if (cache?.IndexOf.ContainsKey(item) ?? false) { return cache.IndexOf[item]; }
         int cnt = GetBranchLength();
         int ret = -1;
         for (int i = 0; i < cnt; i++)
@@ -699,6 +747,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             if (item.Equals(GetNodeAt(i)))
             {
                 ret = i;
+                cache?.IndexOf.Add(item, i);
                 break;
             }
         }
@@ -706,6 +755,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     }
     public override int IndexOf(T? item)
     {
+        if (item is not null && (cache?.IndexOfValue.ContainsKey(item) ?? false)) { return cache.IndexOfValue[item]; }
         int cnt = GetBranchLength();
         int ret = -1;
         ValueTrainNode<T> temp = new ValueTrainNode<T>(item);
@@ -714,6 +764,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
             if (temp.EquivalentTo(GetNodeAt(i)))
             {
                 ret = i;
+                if (item is not null) { cache?.IndexOfValue.Add(item, i); }
                 break;
             }
         }
