@@ -15,3 +15,4 @@ global using TrainDataStructure.Nodes;
 global using TrainDataStructure.DataTypes;
 global using TrainDataStructure.TrainCollections;
 global using TrainDataStructure.Serialization;
+global using TrainDataStructure.Serialization.History;
