@@ -33,6 +33,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public abstract override bool Equals(object? obj);
     public abstract override string ToString();
     public abstract string Serialize();
+    public static AbstractTrainNode Parse(string serializedNode) => NodeDeserializer.DeSerialize(serializedNode);
     public abstract override int GetHashCode();
     public abstract AbstractTrainNode Clone();
     object ICloneable.Clone() { return Clone(); }

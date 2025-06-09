@@ -1,4 +1,6 @@
-﻿namespace TrainDataStructure.Nodes.Standard;
+﻿using System.Reflection;
+
+namespace TrainDataStructure.Nodes.Standard;
 public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
 {
     public override bool IsValueNode => true;
@@ -125,7 +127,23 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     }
     public override string Serialize()
     {
-        return $"ValueTrainNode{SERIALIZATION_SEPARATOR}{typeof(T?).AssemblyQualifiedName}{SERIALIZATION_SEPARATOR}{value}{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}";
+        if (value is null)
+        {
+            return $"ValueTrainNode{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}{SERIALIZATION_SEPARATOR}{typeof(T?).AssemblyQualifiedName}{SERIALIZATION_SEPARATOR}{null}";
+        }
+
+        // Get the parse method, which must be instance and must accept no parameters
+        Type typeParameter = value.GetType();
+        MethodInfo? serializeMethod = typeParameter.GetMethod("Serialize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, []);
+
+        string? serializedValue = value.ToString();
+
+        if (serializeMethod is not null)
+        {
+            serializedValue = (string?)serializeMethod.Invoke(value, []);
+        }
+
+        return $"ValueTrainNode{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}{SERIALIZATION_SEPARATOR}{typeof(T?).AssemblyQualifiedName}{SERIALIZATION_SEPARATOR}{serializedValue}";
     }
 
     protected override TrainOperations HandleAddition(AbstractTrainNode node, Stack<AbstractTrainNode> loopedOver)

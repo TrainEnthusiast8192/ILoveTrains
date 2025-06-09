@@ -1,14 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
+using System.Reflection;
 
 
-Train<int> train = new(40, 66, 0, 4);
-var sorted = train.Contains(0);
-Console.WriteLine(sorted.ToInt());
+ValueTrainNode<ValueTrainNode<int>> oldnode = new(new(330));
+string serialized = oldnode.Serialize();
 
-StandardTrainCacheView<int> cache = (StandardTrainCacheView<int>)train.GetCacheView()!;
-cache.Deconstruct(out int cnt, out bool cntValid, out var Dic1, out var Dic2, out var Dic3);
+FieldInfo f = oldnode.GetType().GetField("INTERNAL_CONNECTIONS_GUID", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+var newnode = (ValueTrainNode<ValueTrainNode<int>>)NodeDeserializer.DeSerialize(serialized);
+var test = "ValueTrainNode\u20653b323e05-69b2-43af-af8f-d5eca20db3ee\u2065System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e\u2065330";
+ValueTrainNode<int> testNode = (ValueTrainNode<int>)NodeDeserializer.DeSerialize(test);
+
+Console.WriteLine("NEW NODE  " + newnode);
+Console.WriteLine("OLD GUID   " + f.GetValue(oldnode));
+Console.WriteLine("NEW GUID   " + f.GetValue(newnode));
 
 public class TestNode : WaitTrainNode
 {
