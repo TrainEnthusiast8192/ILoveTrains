@@ -2,14 +2,14 @@
 using System.Reflection;
 
 namespace TrainDataStructure.Serialization;
-public sealed class NodeDeserializer
+public sealed class NodeDeSerializer
 {
     public const char SERIALIZATION_SEPARATOR = AbstractTrainNode.SERIALIZATION_SEPARATOR;
 
     public static readonly Dictionary<string, Func<string, AbstractTrainNode>> DeSerializers = new();
-    private static readonly NodeDeserializer _instance = new NodeDeserializer();
+    private static readonly NodeDeSerializer _instance = new NodeDeSerializer();
 
-    private NodeDeserializer()
+    private NodeDeSerializer()
     {
         FindDeSerializers();
     }
@@ -27,7 +27,7 @@ public sealed class NodeDeserializer
                                         .GetTypes().SelectMany(x => x.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static))
                                         .Where(x => x.GetCustomAttribute<TrainNodeDeSerializerAttribute>() is not null);
         
-        var libMethods = Assembly.GetAssembly(typeof(NodeDeserializer))?
+        var libMethods = Assembly.GetAssembly(typeof(NodeDeSerializer))?
                                 .GetTypes().SelectMany(x => x.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static))
                                 .Where(x => x.GetCustomAttribute<TrainNodeDeSerializerAttribute>() is not null);
 
@@ -92,7 +92,7 @@ public sealed class NodeDeserializer
                     {
                         slice[i] = SERIALIZATION_SEPARATOR + slice[i];
                     }
-                    parseMethod = typeof(NodeDeserializer).GetMethod("DeSerialize", BindingFlags.Public | BindingFlags.Static);
+                    parseMethod = typeof(NodeDeSerializer).GetMethod("DeSerialize", BindingFlags.Public | BindingFlags.Static);
                 }
 
                 string valToParse = String.Concat(slice);
