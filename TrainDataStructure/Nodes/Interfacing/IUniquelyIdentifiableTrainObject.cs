@@ -14,12 +14,12 @@ public interface IUniquelyIdentifiableTrainObject
     private static readonly List<int> TAKEN_IDS = new List<int>();
     private static readonly Random RAND_INST = new Random();
 
-    public static bool IsIDTaken(int ID) => TAKEN_IDS.Contains(ID);
+    public static bool IsIDTaken(int ID) => ID == Int32.MaxValue || TAKEN_IDS.Contains(ID);
     public static int GetNewID()
     {
         int ret = RAND_INST.Next();
 
-        while (TAKEN_IDS.Contains(ret))
+        while (TAKEN_IDS.Contains(ret) && ret != Int32.MaxValue)
         {
             ret = RAND_INST.Next();
         }
