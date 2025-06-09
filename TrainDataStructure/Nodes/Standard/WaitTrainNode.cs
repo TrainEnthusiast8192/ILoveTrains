@@ -67,21 +67,21 @@ public class WaitTrainNode : AbstractTrainNode
     public override AbstractTrainNode? GetPrevious() => previous;
     public override ITrainCollection? GetTrain() => train;
 
-    public override AbstractTrainNode? ReLink(AbstractTrainNode? node)
+    protected override AbstractTrainNode? HandleReLink(AbstractTrainNode? node)
     {
         AbstractTrainNode? ret = next;
         next = node;
         return ret;
     }
 
-    public override AbstractTrainNode? ReParent(AbstractTrainNode? node)
+    protected override AbstractTrainNode? HandleReParent(AbstractTrainNode? node)
     {
         AbstractTrainNode? ret = previous;
         previous = node;
         return ret;
     }
 
-    public override ITrainCollection? ReTrain(ITrainCollection? train)
+    protected override ITrainCollection? HandleReTrain(ITrainCollection? train)
     {
         ITrainCollection? ret = this.train;
         this.train = train;

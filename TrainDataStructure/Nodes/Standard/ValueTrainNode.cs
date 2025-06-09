@@ -73,12 +73,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
     {
         return node is ValueTrainNode<T> vnode && EqualityComparer<T>.Default.Equals(value, vnode.value);
     }
-    public override bool Equals(object? node)
+    public override bool Equals(object? obj)
     {
-        return node is ValueTrainNode<T> vnode && EqualityComparer<T>.Default.Equals(value, vnode.value);
+        return ReferenceEquals(obj, this);
     }
-    public static bool operator ==(ValueTrainNode<T> nodeA, ValueTrainNode<T> nodeB) => nodeA.value?.Equals(nodeB.value) ?? false;
-    public static bool operator !=(ValueTrainNode<T> nodeA, ValueTrainNode<T> nodeB) => !(nodeA == nodeB);
 
     public override int GetHashCode()
     {
@@ -100,21 +98,21 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         return train;
     }
 
-    public override AbstractTrainNode? ReLink(AbstractTrainNode? node)
+    protected override AbstractTrainNode? HandleReLink(AbstractTrainNode? node)
     {
         AbstractTrainNode? ret = next;
         next = node;
         return ret;
     }
 
-    public override AbstractTrainNode? ReParent(AbstractTrainNode? node)
+    protected override AbstractTrainNode? HandleReParent(AbstractTrainNode? node)
     {
         AbstractTrainNode? ret = previous;
         previous = node;
         return ret;
     }
 
-    public override ITrainCollection? ReTrain(ITrainCollection? train)
+    protected override ITrainCollection? HandleReTrain(ITrainCollection? train)
     {
         ITrainCollection? ret = this.train;
         this.train = train;

@@ -40,17 +40,17 @@ public abstract class OrphanTrainNode : AbstractTrainNode
         return null;
     }
 
-    public sealed override AbstractTrainNode? ReLink(AbstractTrainNode? node)
+    protected sealed override AbstractTrainNode? HandleReLink(AbstractTrainNode? node)
     {
         return null;
     }
 
-    public sealed override AbstractTrainNode? ReParent(AbstractTrainNode? node)
+    protected sealed override AbstractTrainNode? HandleReParent(AbstractTrainNode? node)
     {
         return null;
     }
 
-    public sealed override ITrainCollection? ReTrain(ITrainCollection? train)
+    protected sealed override ITrainCollection? HandleReTrain(ITrainCollection? train)
     {
         return null;
     }

@@ -126,7 +126,7 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         return train;
     }
 
-    public override AbstractTrainNode? ReLink(AbstractTrainNode? node)
+    protected override AbstractTrainNode? HandleReLink(AbstractTrainNode? node)
     {
         if (ForkLeft)
         {
@@ -142,14 +142,14 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         }
     }
 
-    public override AbstractTrainNode? ReParent(AbstractTrainNode? node)
+    protected override AbstractTrainNode? HandleReParent(AbstractTrainNode? node)
     {
         AbstractTrainNode? ret = previous;
         previous = node;
         return ret;
     }
 
-    public override ITrainCollection? ReTrain(ITrainCollection? train)
+    protected override ITrainCollection? HandleReTrain(ITrainCollection? train)
     {
         ITrainCollection? ret = train;
         this.train = train;

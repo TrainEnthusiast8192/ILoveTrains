@@ -42,9 +42,27 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public abstract AbstractTrainNode? GetPrevious();
     public abstract ITrainCollection? GetTrain();
 
-    public abstract AbstractTrainNode? ReLink(AbstractTrainNode? node);
-    public abstract AbstractTrainNode? ReParent(AbstractTrainNode? node);
-    public abstract ITrainCollection? ReTrain(ITrainCollection? train);
+    protected abstract AbstractTrainNode? HandleReLink(AbstractTrainNode? node);
+    public AbstractTrainNode? ReLink(AbstractTrainNode? node)
+    {
+        AbstractTrainNode? ret = HandleReLink(node);
+        GetTrain()?.Log(new TrainNodeReLinkedHistoryEntry(DateTime.Now, this, node));
+        return ret;
+    }
+    protected abstract AbstractTrainNode? HandleReParent(AbstractTrainNode? node);
+    public AbstractTrainNode? ReParent(AbstractTrainNode? node)
+    {
+        AbstractTrainNode? ret = HandleReParent(node);
+        GetTrain()?.Log(null);
+        return ret;
+    }
+    protected abstract ITrainCollection? HandleReTrain(ITrainCollection? train);
+    public ITrainCollection? ReTrain(ITrainCollection? train)
+    {
+        ITrainCollection? ret = HandleReTrain(train);
+        GetTrain()?.Log(null);
+        return ret;
+    }
 
     protected abstract List<AbstractTrainNode> HandleCollapse(Stack<AbstractTrainNode> loopedOver);
     public List<AbstractTrainNode> Collapse(Stack<AbstractTrainNode> loopedOver)
