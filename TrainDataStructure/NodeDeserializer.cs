@@ -12,6 +12,10 @@ public static class NodeDeserializer
         {
             default:
                 throw new ArgumentException($"Invalid node type {groups[0]}");
+            case "OrphanTrainNode":
+                throw new ArgumentException($"Cannot create abstract node type {groups[0]}");
+            case "AbstractTrainNode":
+                throw new ArgumentException($"Cannot create abstract node type {groups[0]}");
             case "ValueTrainNode":
                 // Get the generic type
                 Type typeParameter = Type.GetType(groups[1]) ?? throw new ArgumentException($"Unknown type parameter {groups[1]} found");
@@ -32,7 +36,7 @@ public static class NodeDeserializer
                 // Take care of the GUID directly
                 nodeType.GetField("INTERNAL_CONNECTIONS_GUID", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(node, Guid.Parse(groups[3]));
 
-            return node;
+                return node;
 
             case "SwitchTrainNode":
                 // Simple, parsable fields
@@ -45,7 +49,7 @@ public static class NodeDeserializer
                 // Take care of the GUID directly
                 typeof(SwitchTrainNode).GetField("INTERNAL_CONNECTIONS_GUID", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(ret, Guid.Parse(groups[3]));
 
-            return ret;
+                return ret;
 
             case "WaitTrainNode":
                 // Simple, parsable fields
@@ -55,7 +59,7 @@ public static class NodeDeserializer
                 // Take care of the GUID directly
                 typeof(WaitTrainNode).GetField("INTERNAL_CONNECTIONS_GUID", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(waitret, Guid.Parse(groups[2]));
 
-            return waitret;
+                return waitret;
 
             case "MarkerTrainNode":
                 string message = groups[1];
@@ -64,7 +68,7 @@ public static class NodeDeserializer
                 // Take care of the GUID directly
                 typeof(MarkerTrainNode).GetField("INTERNAL_CONNECTIONS_GUID", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(markerret, Guid.Parse(groups[2]));
 
-            return markerret;
+                return markerret;
         }
     }
 }
