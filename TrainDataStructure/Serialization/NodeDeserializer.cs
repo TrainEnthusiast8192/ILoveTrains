@@ -58,7 +58,7 @@ public sealed class NodeDeserializer
     }
 
 
-    [TrainNodeDeSerializer(["OrphanTrainNode", "AbstractTrainNode", "ValueTrainNode", "SwitchTrainNode", "WaitTrainNode", "MarkerTrainNode"])]
+    [TrainNodeDeSerializer("OrphanTrainNode", "AbstractTrainNode", "ValueTrainNode", "SwitchTrainNode", "WaitTrainNode", "MarkerTrainNode")]
     public static AbstractTrainNode StandardDeSerialize(string serializedNode)
     {
         Span<string> groups = serializedNode.Split(AbstractTrainNode.SERIALIZATION_SEPARATOR);
@@ -155,7 +155,7 @@ public sealed class NodeDeserializer
 /// </summary>
 /// <param name="NodeTypes">Array of constant first segments for each node type being serialized</param>
 [System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple = false, Inherited = true)] 
-public sealed class TrainNodeDeSerializerAttribute(string[] NodeTypes) : Attribute
+public sealed class TrainNodeDeSerializerAttribute(params string[] NodeTypes) : Attribute
 {
     public readonly FrozenSet<string> NodeTypes = NodeTypes.ToFrozenSet();
 }
