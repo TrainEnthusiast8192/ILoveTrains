@@ -12,8 +12,9 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override bool IsReadOnly => false;
 
     public override bool IsCached => cache is not null;
-    public StandardTrainCache<T>? cache = new();
+    protected StandardTrainCache<T>? cache = new();
     public override ITrainCollectionCache? GetCacheView() => cache?.GetView() ?? null;
+
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
     public override int GetHashCode() => SUUID;
