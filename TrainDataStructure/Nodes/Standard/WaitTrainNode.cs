@@ -1,7 +1,4 @@
-﻿
-using static TrainDataStructure.Internal.IndexerInference;
-
-namespace TrainDataStructure.Nodes.Standard;
+﻿namespace TrainDataStructure.Nodes.Standard;
 public class WaitTrainNode : AbstractTrainNode
 {
     protected AbstractTrainNode? next;
