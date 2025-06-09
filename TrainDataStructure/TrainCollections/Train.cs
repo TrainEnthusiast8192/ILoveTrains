@@ -509,7 +509,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
         return ret;
     }
-    public List<string> PrintTrainWithIndent(bool printToConsole = true, int indentSpaceAmount = 4)
+    public virtual List<string> PrintTrainWithIndent(bool printToConsole = true, int indentSpaceAmount = 4)
     {
         List<string> ret = new List<string>();
         int currentIndentation = 0;
