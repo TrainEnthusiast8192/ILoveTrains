@@ -53,7 +53,7 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public AbstractTrainNode? ReParent(AbstractTrainNode? node)
     {
         AbstractTrainNode? ret = HandleReParent(node);
-        GetTrain()?.Log(null);
+        GetTrain()?.Log(new TrainNodeReParentHistoryEntry(DateTime.Now, this, node));
         return ret;
     }
     protected abstract ITrainCollection? HandleReTrain(ITrainCollection? train);

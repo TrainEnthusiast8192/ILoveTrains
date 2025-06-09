@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.Serialization.History;
-public class TrainNodeAddedHistoryEntry : ITrainHistoryEntry
+public sealed class TrainNodeReLinkedHistoryEntry : ITrainHistoryEntry
 {
     public const char SERIALIZATION_SEPARATOR = ITrainHistoryEntry.SERIALIZATION_SEPARATOR;
     private ITrainCollection? parentTrain;
@@ -15,30 +15,33 @@ public class TrainNodeAddedHistoryEntry : ITrainHistoryEntry
     public void SetAbsoluteTimeStamp(DateTime timeStamp) => this.timeStamp = timeStamp;
     public int CalculateMillisToDelay(DateTime creationTime) => (timeStamp - creationTime).Milliseconds;
 
-    private string node;
+    private string nodeFrom;
+    private string nodeTo;
 
-    public TrainNodeAddedHistoryEntry(ITrainCollection parentTrain, Queue<ITrainHistoryEntry> storingCollection, DateTime timeStamp, AbstractTrainNode node)
+    public TrainNodeReLinkedHistoryEntry(ITrainCollection parentTrain, Queue<ITrainHistoryEntry> storingCollection, DateTime timeStamp, AbstractTrainNode nodeFrom, AbstractTrainNode? nodeTo)
     {
         this.parentTrain = parentTrain;
         this.storingCollection = storingCollection;
         this.timeStamp = timeStamp;
-        this.node = node.Serialize();
+        this.nodeFrom = nodeFrom.Serialize();
+        this.nodeTo = nodeTo?.Serialize() ?? "null";
     }
-    public TrainNodeAddedHistoryEntry(DateTime timeStamp, AbstractTrainNode node)
+    public TrainNodeReLinkedHistoryEntry(DateTime timeStamp, AbstractTrainNode nodeFrom, AbstractTrainNode? nodeTo)
     {
         this.parentTrain = null;
         this.storingCollection = null;
         this.timeStamp = timeStamp;
-        this.node = node.Serialize();
+        this.nodeFrom = nodeFrom.Serialize();
+        this.nodeTo = nodeTo?.Serialize() ?? "null";
     }
 
     public string Serialize()
     {
-        return $"AddNode{SERIALIZATION_SEPARATOR}{parentTrain?.GetID() ?? Int32.MaxValue}{SERIALIZATION_SEPARATOR}{timeStamp}{SERIALIZATION_SEPARATOR}{node}";
+        return $"ReLinkNode{SERIALIZATION_SEPARATOR}{parentTrain?.GetID() ?? Int32.MaxValue}{SERIALIZATION_SEPARATOR}{timeStamp}{SERIALIZATION_SEPARATOR}{nodeFrom}{SERIALIZATION_SEPARATOR}{nodeTo}";
     }
 
     public void Execute()
     {
-        parentTrain?.Add(NodeDeSerializer.DeSerialize(node));
+        NodeDeSerializer.DeSerialize(nodeFrom).ReLink(NodeDeSerializer.DeSerialize(nodeTo));
     }
 }

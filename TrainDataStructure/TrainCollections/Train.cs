@@ -15,6 +15,13 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     protected StandardTrainCache<T>? cache = new();
     public override ITrainCollectionCache? GetCacheView() => cache?.GetView() ?? null;
 
+    protected readonly Queue<ITrainHistoryEntry> history = new();
+    public override void Log(ITrainHistoryEntry entry)
+    {
+        entry.SetStoringCollection(history);
+        entry.SetTrain(this);
+        history.Enqueue(entry);
+    }
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
     public override int GetHashCode() => SUUID;
@@ -373,6 +380,8 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
                 cache.BranchCountCached = true;
             }
 
+            history.Enqueue(new TrainNodeAddedHistoryEntry(this, history, DateTime.Now, node));
+
             return true;
         }
 
@@ -381,6 +390,8 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         {
             count++;
             cache?.Invalidate();
+
+            history.Enqueue(new TrainNodeAddedHistoryEntry(this, history, DateTime.Now, node));
         }
         return ret;
     }
@@ -925,6 +936,27 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         }
         return ret;
     }
+
+    public override List<string> SerializeHistory()
+    {
+        List<string> ret = new();
+        foreach (var entry in history)
+        {
+            ret.Add(entry.Serialize());
+        }
+        return ret;
+    }
+    public override ITrainCollection DeSerializeHistory(string[] serializedHistory)
+    {
+        foreach (string entry in serializedHistory)
+        {
+            
+        }
+
+        return this;
+    }
+
+
 
 
     public override T? this[int index, IndexerInference.Strategies.Direct inferenceStrategy = IndexerInference.DIRECT] { get => _getValue(index, []); set => _setValue(value, index, []); }

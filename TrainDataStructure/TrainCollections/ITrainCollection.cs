@@ -17,6 +17,10 @@ public interface ITrainCollection : IList<AbstractTrainNode>, ICollection<Abstra
     public abstract List<string> RawPrintTrain(bool printToConsole = true);
     public abstract List<string> RawPrintBranch(bool printToConsole = true);
 
+    public abstract List<string> SerializeHistory();
+    public abstract ITrainCollection DeSerializeHistory(string[] serializedHistory);
+    public abstract void Log(ITrainHistoryEntry entry);
+
     public abstract AbstractTrainNode? GetNodeAt(int index);
     public abstract AbstractTrainNode? GetNodeAt(Index index);
 

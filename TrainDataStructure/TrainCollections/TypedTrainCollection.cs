@@ -79,6 +79,11 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract List<string> RawPrintTrain(bool printToConsole = true);
     public abstract List<string> RawPrintBranch(bool printToConsole = true);
 
+    // Serialization
+    public abstract List<string> SerializeHistory();
+    public abstract ITrainCollection DeSerializeHistory(string[] serializedHistory);
+    public abstract void Log(ITrainHistoryEntry entry);
+
     // Node finding
     public abstract bool Contains(AbstractTrainNode node);
     public abstract int IndexOf(AbstractTrainNode node);
@@ -230,6 +235,11 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public abstract List<string> PrintBranch(bool printToConsole = true);
     public abstract List<string> RawPrintTrain(bool printToConsole = true);
     public abstract List<string> RawPrintBranch(bool printToConsole = true);
+
+    // Serialization
+    public abstract List<string> SerializeHistory();
+    public abstract ITrainCollection DeSerializeHistory(string[] serializedHistory);
+    public abstract void Log(ITrainHistoryEntry entry);
 
     // Node finding
     public abstract bool Contains(AbstractTrainNode node);
