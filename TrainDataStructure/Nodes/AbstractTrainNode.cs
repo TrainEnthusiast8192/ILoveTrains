@@ -1,7 +1,7 @@
 ﻿namespace TrainDataStructure.Nodes;
 public abstract class AbstractTrainNode : IComparable, ICloneable
 {
-    protected readonly Guid INTERNAL_CONNECTIONS_GUID = new Guid();
+    protected readonly Guid INTERNAL_CONNECTIONS_GUID = Guid.NewGuid();
     public const char SERIALIZATION_SEPARATOR = '\u2065'; // U+2065 is "Invisible operators - undefined", which seems to have no use
     protected static void NodeEventsConstructor() { }
     public delegate void NodeEvents();
