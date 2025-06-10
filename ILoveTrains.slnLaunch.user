@@ -13,7 +13,7 @@
     "Projects": [
       {
         "Path": "TrainExplorer\\TrainExplorer.csproj",
-        "Action": "StartWithoutDebugging",
+        "Action": "Start",
         "DebugTarget": "TrainExplorer"
       }
     ]
