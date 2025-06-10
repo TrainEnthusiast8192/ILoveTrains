@@ -2,6 +2,7 @@
 public abstract class TypedTrainCollection<T> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
 {
     // Constructors
+    #pragma warning disable IDE0060
     public TypedTrainCollection() { }
     public TypedTrainCollection(params AbstractTrainNode?[] initNodes) { }
     public TypedTrainCollection(IEnumerable<AbstractTrainNode> initNodes) { }
@@ -10,6 +11,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public TypedTrainCollection(IEnumerable<T?> initValues) { }
     public TypedTrainCollection(Span<T> initValues) { }
     public TypedTrainCollection(PreBuiltTrainStructure initStructure) { }
+    #pragma warning restore IDE0060
     ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
     public abstract void Dispose();
 
@@ -154,6 +156,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
 public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainCollection, IList<AbstractTrainNode>, ICollection<AbstractTrainNode>, IEnumerable<AbstractTrainNode>
 {
     // Constructors
+    #pragma warning disable IDE0060
     public TypedTrainCollection() { }
     public TypedTrainCollection(PreBuiltTrainStructure initStructure) { }
     public TypedTrainCollection(params AbstractTrainNode?[] initNodes) { }
@@ -162,6 +165,7 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public TypedTrainCollection(params T?[] initValues) { }
     public TypedTrainCollection(IEnumerable<T?> initValues) { }
     public TypedTrainCollection(Span<T> initValues) { }
+    #pragma warning restore IDE0060
 
     ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
     public abstract void Dispose();
