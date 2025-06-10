@@ -42,6 +42,12 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
     public abstract AbstractTrainNode? GetPrevious();
     public abstract ITrainCollection? GetTrain();
 
+    /// <summary>
+    /// Re-connects this node to another one (or makes it end of branch).
+    /// Implement without side effects and idempotently; it will be called often!
+    /// </summary>
+    /// <param name="node">Other node to connect to (or null for end of branch)</param>
+    /// <returns>Previous link before starting operation</returns>
     protected abstract AbstractTrainNode? HandleReLink(AbstractTrainNode? node);
     public AbstractTrainNode? ReLink(AbstractTrainNode? node)
     {
@@ -49,6 +55,13 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         GetTrain()?.Log(new TrainNodeReLinkedHistoryEntry(DateTime.Now, this, node));
         return ret;
     }
+    /// <summary>
+    /// Re-parents this node to another one (or makes it non-reversable/first).
+    /// Implement without side effects and idempotently; it will be called often!
+    /// Nodes that have no explicit parent may still have nodes linked towards it. Keep it that way!
+    /// </summary>
+    /// <param name="node">Other node to come from (or null for no explicit parent)</param>
+    /// <returns>Previous parent before starting operation</returns>
     protected abstract AbstractTrainNode? HandleReParent(AbstractTrainNode? node);
     public AbstractTrainNode? ReParent(AbstractTrainNode? node)
     {
@@ -56,11 +69,21 @@ public abstract class AbstractTrainNode : IComparable, ICloneable
         GetTrain()?.Log(new TrainNodeReParentHistoryEntry(DateTime.Now, this, node));
         return ret;
     }
+    /// <summary>
+    /// Replaces the node's connection to its parent train with another instance
+    /// Implement without side effects and idempotently; it will be called often!
+    /// </summary>
+    /// <param name="train">Other train to connect to (or null for unconnected node)</param>
+    /// <returns>Previous link before starting operation</returns>
     protected abstract ITrainCollection? HandleReTrain(ITrainCollection? train);
     public ITrainCollection? ReTrain(ITrainCollection? train)
     {
         ITrainCollection? ret = HandleReTrain(train);
-        GetTrain()?.Log(null);
+
+        // Do both so moving, detaching and adding nodes always get logged
+        // If both are null, this was a no-op, so we don't care about logging it
+        ret?.Log(new TrainNodeReTrainedHistoryEntry(DateTime.Now, this, train));
+        GetTrain()?.Log(new TrainNodeReTrainedHistoryEntry(DateTime.Now, this, train));
         return ret;
     }
 
