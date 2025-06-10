@@ -81,7 +81,8 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
 
     // Serialization
     public abstract List<string> SerializeHistory();
-    public abstract ITrainCollection DeSerializeHistory(string[] serializedHistory);
+    public abstract Task<ITrainCollection> DeSerializeHistory(string[] serializedHistory);
+    public abstract ITrainCollection DeSerializeHistoryInstant(string[] serializedHistory);
     public abstract void Log(ITrainHistoryEntry entry);
 
     // Node finding
@@ -238,7 +239,8 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
 
     // Serialization
     public abstract List<string> SerializeHistory();
-    public abstract ITrainCollection DeSerializeHistory(string[] serializedHistory);
+    public abstract Task<ITrainCollection> DeSerializeHistory(string[] serializedHistory);
+    public abstract ITrainCollection DeSerializeHistoryInstant(string[] serializedHistory);
     public abstract void Log(ITrainHistoryEntry entry);
 
     // Node finding

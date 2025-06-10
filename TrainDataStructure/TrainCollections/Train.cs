@@ -947,11 +947,20 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         }
         return ret;
     }
-    public override ITrainCollection DeSerializeHistory(string[] serializedHistory)
+    public async override Task<ITrainCollection> DeSerializeHistory(string[] serializedHistory)
     {
         foreach (string entry in serializedHistory)
         {
             
+        }
+
+        return this;
+    }
+    public override ITrainCollection DeSerializeHistoryInstant(string[] serializedHistory)
+    {
+        foreach (string entry in serializedHistory)
+        {
+
         }
 
         return this;
