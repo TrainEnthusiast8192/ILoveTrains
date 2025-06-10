@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-namespace TrainDataStructure.Serialization;
+﻿namespace TrainDataStructure.Serialization;
 public static class StandardDeSerializer
 {
     public const char SERIALIZATION_SEPARATOR = NodeDeSerializer.SERIALIZATION_SEPARATOR;
@@ -72,7 +71,7 @@ public static class StandardDeSerializer
 
         // Pass fourth argument with no caller onto parseMethod
         // We concatenate them in case the value used the same separator
-        var slice = groups.Slice(3);
+        var slice = groups[3..];
 
         if (typeof(AbstractTrainNode).IsAssignableFrom(typeParameter))
         {
@@ -87,6 +86,11 @@ public static class StandardDeSerializer
         string valToParse = String.Concat(slice);
         object? value = parseMethod?.Invoke(null, [valToParse]) ?? default;
 
+        if (typeof(SerializablePredicate<>).MakeGenericType([typeParameter.GetGenericArguments()[0]]).IsAssignableFrom(typeParameter))
+        {
+            value = DeserializePredicate(typeParameter, valToParse);
+        }
+
         Type nodeType = typeof(ValueTrainNode<>).MakeGenericType([typeParameter]);
 
         // Build the node as a non-generic one
@@ -100,5 +104,18 @@ public static class StandardDeSerializer
         nodeType.GetField("INTERNAL_CONNECTIONS_GUID", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(node, Guid.Parse(groups[1]));
 
         return node;
+    }
+    public static object DeserializePredicate(Type targetType, string expressionString)
+    {
+        Type typeParameter = targetType.GetGenericArguments()[0];
+
+        Type incompleteGeneric = typeof(SerializablePredicate<>);
+
+        Type completedGeneric = incompleteGeneric.MakeGenericType([typeParameter]);
+
+        object deserializedPredicate = Activator.CreateInstance(completedGeneric, [expressionString])
+                                        ?? throw new Exception("Predicate deserialization failed");
+
+        return deserializedPredicate;
     }
 }

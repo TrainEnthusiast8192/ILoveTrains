@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace TrainDataStructure.Nodes.Standard;
+﻿namespace TrainDataStructure.Nodes.Standard;
 public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
 {
     public override bool IsValueNode => true;
@@ -139,6 +137,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
         if (serializeMethod is not null)
         {
             serializedValue = (string?)serializeMethod.Invoke(value, []);
+        }
+        else if (typeof(SerializablePredicate<>).IsAssignableFrom(value.GetType()))
+        {
+            serializedValue = (string)(value?.GetType().GetMethod("ToString", BindingFlags.Instance)?.Invoke(value, []) ?? "");
         }
 
         return $"ValueTrainNode{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}{SERIALIZATION_SEPARATOR}{typeof(T?).AssemblyQualifiedName}{SERIALIZATION_SEPARATOR}{serializedValue}";
