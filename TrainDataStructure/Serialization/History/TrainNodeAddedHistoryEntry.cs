@@ -15,7 +15,7 @@ public class TrainNodeAddedHistoryEntry : ITrainHistoryEntry
     public void SetAbsoluteTimeStamp(DateTime timeStamp) => this.timeStamp = timeStamp;
     public int CalculateMillisToDelay(DateTime creationTime) => (timeStamp - creationTime).Milliseconds;
 
-    private string node;
+    private readonly string node;
 
     public TrainNodeAddedHistoryEntry(ITrainCollection parentTrain, Queue<ITrainHistoryEntry> storingCollection, DateTime timeStamp, AbstractTrainNode node)
     {
