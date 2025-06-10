@@ -1,5 +1,4 @@
 ﻿using System.Collections.Frozen;
-using System.Reflection;
 
 namespace TrainDataStructure.Serialization;
 public sealed class NodeDeSerializer
@@ -18,10 +17,10 @@ public sealed class NodeDeSerializer
     {
         string firstSegment = serializedNode.Split(SERIALIZATION_SEPARATOR)[0];
         return Instance.DeSerializers.TryGetValue(firstSegment, out Func<string, AbstractTrainNode>? value) ? value.Invoke(serializedNode)
-            : throw new TrainDeSerializationNoDeSerializerFoundException($"No deserializer found for node: {serializedNode}");
+            : throw new TrainDeSerializationNoDeSerializerFoundException($"No deserializer found for node: {firstSegment}");
     }
 
-    private HashSet<Assembly> FindAssemblies()
+    private static HashSet<Assembly> FindAssemblies()
     {
         var rootAssembly = Assembly.GetEntryAssembly();
 
@@ -30,7 +29,7 @@ public sealed class NodeDeSerializer
 
         queue.Enqueue(rootAssembly);
 
-        while (queue.Any())
+        while (queue.Count > 0)
         {
             var assembly = queue.Dequeue();
             if (assembly is null) { continue; }
@@ -45,29 +44,28 @@ public sealed class NodeDeSerializer
                 }
             }
         }
-
+        
         return visited;
     }
-    private IEnumerable<MethodInfo>? FindMethods()
+    private static List<MethodInfo> FindMethods()
     {
         var visited = FindAssemblies();
 
-        IEnumerable<MethodInfo>? libMethods = null;
+        List<MethodInfo> libMethods = [];
 
         foreach (Assembly assemb in visited)
         {
             var methods = assemb.GetTypes().SelectMany(x => x.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static))
                                 .Where(x => x.GetCustomAttribute<TrainNodeDeSerializerAttribute>() is not null);
 
-            libMethods = libMethods?.Union(methods) ?? [];
+            libMethods.AddRange(methods);
         }
-
+        
         return libMethods;
     }
-    private Dictionary<string, Func<string, AbstractTrainNode>> FindDeSerializers()
+    private static Dictionary<string, Func<string, AbstractTrainNode>> FindDeSerializers()
     {
-        var methods = FindMethods();
-        if (methods is null) { return []; }
+        List<MethodInfo> methods = FindMethods();
 
         Dictionary<string, Func<string, AbstractTrainNode>> ret = new();
 
@@ -113,6 +111,7 @@ public sealed class TrainNodeDeSerializerAttribute(params string[] NodeTypes) : 
 
 
 #region Exception Types
+#pragma warning disable IDE0290 // Use primary constructor
 public abstract class TrainDeSerializationException : Exception { public TrainDeSerializationException(string message) : base(message) { } }
 public sealed class TrainDeSerializationInvalidFormatException : TrainDeSerializationException { public TrainDeSerializationInvalidFormatException(string message) : base(message) { } }
 public sealed class TrainDeSerializationInvalidNodeTypeException : TrainDeSerializationException { public TrainDeSerializationInvalidNodeTypeException(string message) : base(message) { } }
@@ -120,4 +119,5 @@ public sealed class TrainDeSerializationAbstractNodeTypeException : TrainDeSeria
 public sealed class TrainDeSerializationNoDeSerializerFoundException : TrainDeSerializationException { public TrainDeSerializationNoDeSerializerFoundException(string message) : base(message) { } }
 public sealed class TrainDeSerializationUnknownNodeTypeException : TrainDeSerializationException { public TrainDeSerializationUnknownNodeTypeException(string message) : base(message) { } }
 public sealed class TrainDeSerializationFinderAttributeIncoherenceException : TrainDeSerializationException { public TrainDeSerializationFinderAttributeIncoherenceException(string message) : base(message) { } }
+#pragma warning restore IDE0290
 #endregion
