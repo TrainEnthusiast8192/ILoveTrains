@@ -1,9 +1,10 @@
 ﻿namespace TrainDataStructure.Serialization;
 public static class StandardDeSerializer
 {
-    public const char SERIALIZATION_SEPARATOR = NodeDeSerializer.SERIALIZATION_SEPARATOR;
+    public const char NODE_SERIALIZATION_SEPARATOR = NodeDeSerializer.SERIALIZATION_SEPARATOR;
+    public const char ENTRY_SERIALIZATION_SEPARATOR = TrainHistoryEntryDeSerializer.SERIALIZATION_SEPARATOR;
 
-    [TrainNodeDeSerializer("OrphanTrainNode", "AbstractTrainNode", "ValueTrainNode", "SwitchTrainNode", "WaitTrainNode", "MarkerTrainNode")]
+    [TrainNodeDeSerializer(nameof(OrphanTrainNode), nameof(AbstractTrainNode), nameof(ValueTrainNode<>), nameof(SwitchTrainNode), nameof(WaitTrainNode), nameof(MarkerTrainNode))]
     public static AbstractTrainNode StandardDeSerialize(string serializedNode)
     {
         Span<string> groups = serializedNode.Split(AbstractTrainNode.SERIALIZATION_SEPARATOR);
@@ -12,15 +13,15 @@ public static class StandardDeSerializer
         switch (groups[0])
         {
             default:
-                throw new TrainDeSerializationInvalidNodeTypeException($"Invalid node type {groups[0]}");
-            case "OrphanTrainNode":
+                throw new TrainDeSerializationInvalidTypeException($"Invalid node type {groups[0]}");
+            case nameof(OrphanTrainNode):
                 throw new TrainDeSerializationAbstractNodeTypeException($"Cannot create abstract node type {groups[0]}");
-            case "AbstractTrainNode":
+            case nameof(AbstractTrainNode):
                 throw new TrainDeSerializationAbstractNodeTypeException($"Cannot create abstract node type {groups[0]}");
-            case "ValueTrainNode":
+            case nameof(ValueTrainNode<>):
                 return CaseValueNode(groups);
 
-            case "SwitchTrainNode":
+            case nameof(SwitchTrainNode):
                 // Simple, parsable fields
                 int id = int.Parse(groups[1]);
                 bool fork = bool.Parse(groups[2]);
@@ -33,7 +34,7 @@ public static class StandardDeSerializer
 
                 return switchret;
 
-            case "WaitTrainNode":
+            case nameof(WaitTrainNode):
                 // Simple, parsable fields
                 int millis = int.Parse(groups[1]);
                 WaitTrainNode waitret = new WaitTrainNode(millis);
@@ -43,7 +44,7 @@ public static class StandardDeSerializer
 
                 return waitret;
 
-            case "MarkerTrainNode":
+            case nameof(MarkerTrainNode):
                 string message = groups[1];
                 MarkerTrainNode markerret = new MarkerTrainNode(message);
 
@@ -78,18 +79,13 @@ public static class StandardDeSerializer
             int cnt = slice.Length;
             for (int i = 1; i < cnt; i++)
             {
-                slice[i] = SERIALIZATION_SEPARATOR + slice[i];
+                slice[i] = NODE_SERIALIZATION_SEPARATOR + slice[i];
             }
             parseMethod = typeof(NodeDeSerializer).GetMethod("DeSerialize", BindingFlags.Public | BindingFlags.Static);
         }
 
         string valToParse = String.Concat(slice);
         object? value = parseMethod?.Invoke(null, [valToParse]) ?? default;
-
-        if (typeof(SerializablePredicate<>).MakeGenericType([typeParameter.GetGenericArguments()[0]]).IsAssignableFrom(typeParameter))
-        {
-            value = DeserializePredicate(typeParameter, valToParse);
-        }
 
         Type nodeType = typeof(ValueTrainNode<>).MakeGenericType([typeParameter]);
 
@@ -105,17 +101,19 @@ public static class StandardDeSerializer
 
         return node;
     }
-    public static object DeserializePredicate(Type targetType, string expressionString)
+
+    [TrainHistoryEntryDeSerializer()]
+    public static ITrainHistoryEntry DeSerializeEntry(string serializedEntry)
     {
-        Type typeParameter = targetType.GetGenericArguments()[0];
+        Span<string> groups = serializedEntry.Split(AbstractTrainNode.SERIALIZATION_SEPARATOR);
+        if (groups.Length == 0) { throw new ArgumentException("String contains no separable groups"); }
 
-        Type incompleteGeneric = typeof(SerializablePredicate<>);
-
-        Type completedGeneric = incompleteGeneric.MakeGenericType([typeParameter]);
-
-        object deserializedPredicate = Activator.CreateInstance(completedGeneric, [expressionString])
-                                        ?? throw new Exception("Predicate deserialization failed");
-
-        return deserializedPredicate;
+        switch (groups[0])
+        {
+            default:
+                throw new TrainDeSerializationInvalidTypeException($"Invalid entry type {groups[0]}");
+            case nameof(ITrainHistoryEntry):
+                throw new TrainDeSerializationAbstractNodeTypeException($"Cannot create abstract entry type {groups[0]}");
+        }
     }
 }

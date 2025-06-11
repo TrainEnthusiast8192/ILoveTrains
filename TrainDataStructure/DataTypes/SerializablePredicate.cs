@@ -1,8 +1,10 @@
-﻿namespace TrainDataStructure.DataTypes;
+﻿using System.Linq.Dynamic.Core;
+namespace TrainDataStructure.DataTypes;
 public sealed class SerializablePredicate<T> : IComparable
 {
     private readonly Func<T, bool> AsPredicate;
     private readonly Expression<Func<T, bool>> AsExpression;
+    private static readonly ParsingConfig CONFIG = new();
 
     public bool Invoke(T argument) => AsPredicate.Invoke(argument);
 
@@ -25,6 +27,12 @@ public sealed class SerializablePredicate<T> : IComparable
     public int CompareTo(object? obj)
     {
         return 1;
+    }
+
+    public static SerializablePredicate<T> Parse(string serializedPredicate)
+    {
+        var exp = DynamicExpressionParser.ParseLambda<T, bool>(CONFIG, false, serializedPredicate);
+        return new SerializablePredicate<T>(exp.Compile(), exp);
     }
 
     public static implicit operator Func<T, bool>(SerializablePredicate<T> serPred) => serPred.AsPredicate;

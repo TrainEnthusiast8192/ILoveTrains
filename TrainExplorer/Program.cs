@@ -1,6 +1,8 @@
 ﻿SerializablePredicate<string> s = new(o => o.Length < 5);
 var node = new ValueTrainNode<SerializablePredicate<string>>(s);
-Console.WriteLine(node.Serialize());
+Console.WriteLine(NodeDeSerializer.DeSerialize(node.Serialize()));
+
+
 
 public class TestNode : WaitTrainNode
 {
