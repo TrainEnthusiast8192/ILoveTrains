@@ -12,7 +12,7 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public TypedTrainCollection(Span<T> initValues) { }
     public TypedTrainCollection(PreBuiltTrainStructure initStructure) { }
     #pragma warning restore IDE0060
-    ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
+    ~TypedTrainCollection() { IUniquelyIdentifiableTrainItem.ReturnID(this); }
     public abstract void Dispose();
 
     // Standard information
@@ -167,7 +167,7 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
     public TypedTrainCollection(Span<T> initValues) { }
     #pragma warning restore IDE0060
 
-    ~TypedTrainCollection() { IUniquelyIdentifiableTrainObject.ReturnID(this); }
+    ~TypedTrainCollection() { IUniquelyIdentifiableTrainItem.ReturnID(this); }
     public abstract void Dispose();
 
     // Standard information

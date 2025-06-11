@@ -1,5 +1,5 @@
 ﻿namespace TrainDataStructure.Nodes.Standard;
-public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObject, ITrainSignalReceiver, IDisposable
+public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainItem, ITrainSignalReceiver, IDisposable
 {
     public const string BRANCH_END = "END_OF_BRANCH";
 
@@ -39,7 +39,7 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
 
     public SwitchTrainNode()
     {
-        this.id = IUniquelyIdentifiableTrainObject.GetNewID();
+        this.id = IUniquelyIdentifiableTrainItem.GetNewID();
         this.previous = null;
         this.next = null;
         this.train = null;
@@ -50,11 +50,11 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         this.previous = null;
         this.next = null;
         this.train = null;
-        IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
+        IUniquelyIdentifiableTrainItem.AddForcedID(forceID);
     }
     public SwitchTrainNode(AbstractTrainNode? previous, AbstractTrainNode? next, ITrainCollection? train)
     {
-        this.id = IUniquelyIdentifiableTrainObject.GetNewID();
+        this.id = IUniquelyIdentifiableTrainItem.GetNewID();
         this.previous = previous;
         this.next = next;
         this.train = train;
@@ -65,15 +65,15 @@ public class SwitchTrainNode : AbstractTrainNode, IUniquelyIdentifiableTrainObje
         this.previous = previous;
         this.next = next;
         this.train = train;
-        IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
+        IUniquelyIdentifiableTrainItem.AddForcedID(forceID);
     }
     ~SwitchTrainNode()
     {
-        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        IUniquelyIdentifiableTrainItem.ReturnID(this);
     }
     public void Dispose()
     {
-        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        IUniquelyIdentifiableTrainItem.ReturnID(this);
         GC.SuppressFinalize(this);
     }
 

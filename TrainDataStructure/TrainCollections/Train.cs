@@ -37,7 +37,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     {
         first = null;
         count = 0;
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
          
     }
     /// <summary>
@@ -49,7 +49,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         first = null;
         count = 0;
         SUUID = forceID;
-        IUniquelyIdentifiableTrainObject.AddForcedID(forceID);
+        IUniquelyIdentifiableTrainItem.AddForcedID(forceID);
          
     }
 
@@ -60,7 +60,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initNodes">Collection of existing node instances</param>
     public Train(params AbstractTrainNode[] initNodes) : base(initNodes)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (AbstractTrainNode n in initNodes)
         {
             Add(n);
@@ -73,7 +73,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initNodes">Collection of existing node instances</param>
     public Train(IEnumerable<AbstractTrainNode> initNodes) : base(initNodes)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (AbstractTrainNode n in initNodes)
         {
             Add(n);
@@ -86,7 +86,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initNodes">Collection of existing node instances</param>
     public Train(Span<AbstractTrainNode> initNodes) : base(initNodes)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (AbstractTrainNode val in initNodes)
         {
             Add(val);
@@ -101,7 +101,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initValues">Collection of values</param>
     public Train(params T?[] initValues) : base(initValues)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (T? val in initValues)
         {
             Add(val);
@@ -114,7 +114,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initValues">Collection of values</param>
     public Train(IEnumerable<T?> initValues) : base(initValues)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (T? val in initValues)
         {
             Add(val);
@@ -127,7 +127,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initValues">Collection of values</param>
     public Train(Span<T> initValues) : base(initValues)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (T val in initValues)
         {
             Add(val);
@@ -142,7 +142,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initValuesAndNodes">Collection of values and nodes</param>
     public Train(params object?[] initValuesAndNodes)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (object? n in initValuesAndNodes)
         {
             if (n is T value) { Add(value); }
@@ -158,7 +158,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initValuesAndNodes">Collection of values and nodes</param>
     public Train(IEnumerable<object?> initValuesAndNodes)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (object? n in initValuesAndNodes)
         {
             if (n is T value) { Add(value); }
@@ -174,7 +174,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initValuesAndNodes">Collection of values and nodes</param>
     public Train(Span<object?> initValuesAndNodes)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         foreach (object? n in initValuesAndNodes)
         {
             if (n is T value) { Add(value); }
@@ -192,7 +192,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <param name="initStructure">Structure to add</param>
     public Train(PreBuiltTrainStructure initStructure) : base(initStructure)
     {
-        SUUID = IUniquelyIdentifiableTrainObject.GetNewID();
+        SUUID = IUniquelyIdentifiableTrainItem.GetNewID();
         Add(initStructure);
          
     }
@@ -218,12 +218,12 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// </summary>
     ~Train()
     {
-        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        IUniquelyIdentifiableTrainItem.ReturnID(this);
         cache = null;
     }
     public override void Dispose()
     {
-        IUniquelyIdentifiableTrainObject.ReturnID(this);
+        IUniquelyIdentifiableTrainItem.ReturnID(this);
         cache = null;
         GC.SuppressFinalize(this);
     }

@@ -1,8 +1,8 @@
 ﻿namespace TrainDataStructure.Nodes.Interfacing;
-public interface IUniquelyIdentifiableTrainObject
+public interface IUniquelyIdentifiableTrainItem
 {
     public abstract int GetID();
-    public static void ReturnID(IUniquelyIdentifiableTrainObject owner)
+    public static void ReturnID(IUniquelyIdentifiableTrainItem owner)
     {
         TAKEN_IDS.Remove(owner.GetID());
     }
