@@ -4,7 +4,7 @@ public sealed class SerializablePredicate<T> : IComparable
 {
     private readonly Func<T, bool> AsPredicate;
     private readonly Expression<Func<T, bool>> AsExpression;
-    private static readonly ParsingConfig CONFIG = new();
+    private static readonly ParsingConfig CONFIG = ParsingConfig.Default;
 
     public bool Invoke(T argument) => AsPredicate.Invoke(argument);
 
