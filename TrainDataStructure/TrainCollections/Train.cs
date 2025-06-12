@@ -25,6 +25,8 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
     public override int GetHashCode() => SUUID;
+    protected override ValueTrainNode<T> MakeValueNode(T? value) => MakeValueNode(value);
+    protected override ValueTrainNode<M> MakeValueNode<M>(M? value) where M : default => MakeValueNode<M>(value);
 
     public override AbstractTrainNode? GetFirst() => first;
 
@@ -342,7 +344,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// </summary>
     /// <param name="value">Value to add</param>
     /// <returns>Success / Failure</returns>
-    public override bool Add(T? value) => Add(new ValueTrainNode<T>(value));
+    public override bool Add(T? value) => Add(MakeValueNode(value));
     /// <summary>
     /// Handles external addition called from the base abstract class member AddExternal of <typeparamref name="M"/>.
     /// Wraps the value in a value and attempts to add it
@@ -352,7 +354,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     /// <returns>Succes / Failure</returns>
     protected override bool HandleAddExternal<M>(M? value) where M : default 
     {
-        return Add(new ValueTrainNode<M>(value));
+        return Add(MakeValueNode<M>(value));
     }
     /// <summary>
     /// Adds a node at the end of the currently active branch.
@@ -563,7 +565,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     public override bool Remove(T? value)
     {
         AbstractTrainNode? current = first;
-        ValueTrainNode<T> compNode = new ValueTrainNode<T>(value);
+        ValueTrainNode<T> compNode = MakeValueNode(value);
 
         while (current is not null)
         {
@@ -626,7 +628,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Insert(int index, T? value)
     {
-        return Insert(index, new ValueTrainNode<T>(value));
+        return Insert(index, MakeValueNode<T>(value));
     }
 
     public override bool Insert(Index index, T? value) => Insert(index.GetOffset(GetBranchLength()), value);
@@ -648,7 +650,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         return ret;
     }
 
-    public override bool Insert<M>(int index, M? value) where M : default => Insert(index, node: new ValueTrainNode<M>(value));
+    public override bool Insert<M>(int index, M? value) where M : default => Insert(index, node: MakeValueNode<M>(value));
     public override bool Insert<M>(Index index, M? value) where M : default => Insert(index.GetOffset(GetBranchLength()), value);
 
     public override bool Insert<M>(Range range, params M?[] values) where M : default
@@ -730,7 +732,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
         if (item is not null && (cache?.IndexOfValue.ContainsKey(item) ?? false)) { return true; }
         int cnt = GetBranchLength();
         bool ret = true;
-        ValueTrainNode<T> temp = new ValueTrainNode<T>(item);
+        ValueTrainNode<T> temp = MakeValueNode(item);
         for (int i = 0; i < cnt; i++)
         {
             ret |= temp.EquivalentTo(GetNodeAt(i));
@@ -741,7 +743,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     {
         int cnt = GetBranchLength();
         bool ret = true;
-        ValueTrainNode<M> temp = new ValueTrainNode<M>(item);
+        ValueTrainNode<M> temp = MakeValueNode<M>(item);
         for (int i = 0; i < cnt; i++)
         {
             ret |= temp.EquivalentTo(GetNodeAt(i));
@@ -789,7 +791,7 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     {
         int cnt = GetBranchLength();
         int ret = -1;
-        ValueTrainNode<M> temp = new ValueTrainNode<M>(item);
+        ValueTrainNode<M> temp = MakeValueNode<M>(item);
         for (int i = 0; i < cnt; i++)
         {
             if (temp.EquivalentTo(GetNodeAt(i)))

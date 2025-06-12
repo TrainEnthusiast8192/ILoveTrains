@@ -27,6 +27,10 @@ public abstract class TypedTrainCollection<T> : ITrainCollection, IList<Abstract
     public abstract int GetTotalCount();
     public abstract int GetBranchLength();
 
+    // Make node for value operations
+    protected abstract AbstractTrainNode MakeValueNode(T? value);
+    protected abstract AbstractTrainNode MakeValueNode<M>(M? value);
+
     // Add value
     public abstract bool Add(T? value);
     // Add node
@@ -184,6 +188,10 @@ public abstract class TypedTrainCollection<T, MExternalTypeConstraint> : ITrainC
 
     public abstract override bool Equals(object? obj);
     public abstract override int GetHashCode();
+
+    // Make node for value operations
+    protected abstract AbstractTrainNode MakeValueNode(T? value);
+    protected abstract AbstractTrainNode MakeValueNode<M>(M? value) where M : MExternalTypeConstraint;
 
     // Add value
     public abstract bool Add(T? value);
