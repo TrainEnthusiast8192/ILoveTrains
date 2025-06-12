@@ -15,9 +15,9 @@ public static class StandardDeSerializer
             default:
                 throw new TrainDeSerializationInvalidTypeException($"Invalid node type {groups[0]}");
             case nameof(OrphanTrainNode):
-                throw new TrainDeSerializationAbstractNodeTypeException($"Cannot create abstract node type {groups[0]}");
+                throw new TrainDeSerializationAbstractTypeException($"Cannot create abstract node type {groups[0]}");
             case nameof(AbstractTrainNode):
-                throw new TrainDeSerializationAbstractNodeTypeException($"Cannot create abstract node type {groups[0]}");
+                throw new TrainDeSerializationAbstractTypeException($"Cannot create abstract node type {groups[0]}");
             case nameof(ValueTrainNode<>):
                 return CaseValueNode(groups);
 
@@ -67,8 +67,8 @@ public static class StandardDeSerializer
             ?? throw new ArgumentException($"Unknown type parameter {groups[1]} found");
 
         // Get the parse method, which must be static and must accept a single string. TryParse is also valid
-        MethodInfo? parseMethod = typeParameter.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)])
-            ?? typeParameter.GetMethod("TryParse", BindingFlags.Public | BindingFlags.Static, [typeof(string), typeParameter.MakeByRefType()]);
+        MethodInfo? parseMethod = typeParameter.GetMethod("TryParse", BindingFlags.Public | BindingFlags.Static, [typeof(string), typeParameter.MakeByRefType()])
+            ?? typeParameter.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]);
 
         // Pass fourth argument with no caller onto parseMethod
         // We concatenate them in case the value used the same separator
@@ -91,7 +91,7 @@ public static class StandardDeSerializer
 
         // Build the node as a non-generic one
         AbstractTrainNode node = (AbstractTrainNode)(Activator.CreateInstance(nodeType, value)
-            ?? throw new TrainDeSerializationUnknownNodeTypeException($"Unknown node type {nodeType} found"));
+            ?? throw new TrainDeSerializationUnknownTypeException($"Unknown node type {nodeType} found"));
 
         // Get the SetValue method and call it with what we have
         nodeType.GetMethod("SetValue", BindingFlags.Public, [typeParameter])?.Invoke(node, [value]);
@@ -102,7 +102,7 @@ public static class StandardDeSerializer
         return node;
     }
 
-    [TrainHistoryEntryDeSerializer()]
+    [TrainHistoryEntryDeSerializer(nameof(ITrainHistoryEntry))]
     public static ITrainHistoryEntry DeSerializeEntry(string serializedEntry)
     {
         Span<string> groups = serializedEntry.Split(AbstractTrainNode.SERIALIZATION_SEPARATOR);
@@ -113,7 +113,7 @@ public static class StandardDeSerializer
             default:
                 throw new TrainDeSerializationInvalidTypeException($"Invalid entry type {groups[0]}");
             case nameof(ITrainHistoryEntry):
-                throw new TrainDeSerializationAbstractNodeTypeException($"Cannot create abstract entry type {groups[0]}");
+                throw new TrainDeSerializationAbstractTypeException($"Cannot create abstract entry type {groups[0]}");
         }
     }
 }
