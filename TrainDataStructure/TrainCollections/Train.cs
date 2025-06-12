@@ -18,7 +18,6 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
     protected readonly Queue<ITrainHistoryEntry> history = new();
     public override void Log(ITrainHistoryEntry entry)
     {
-        if (entry is null) { return; }
         entry.SetStoringCollection(history);
         entry.SetTrain(this);
         history.Enqueue(entry);
