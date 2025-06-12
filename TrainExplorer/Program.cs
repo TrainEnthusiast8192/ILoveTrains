@@ -1,6 +1,6 @@
-﻿SerializablePredicate<TrainSignal> s = new(o =>(bool?)(o.FindCodeGetPayload("TEST")) ?? false);
+﻿SerializablePredicate<TrainSignal> s = new(o => "CODE".Equals(o.FindCode("CODE")), ["TrainDataStructure.DataTypes"], [typeof(TrainSignal).Assembly]);
 var node = new ValueTrainNode<SerializablePredicate<TrainSignal>>(s);
-Console.WriteLine(NodeDeSerializer.DeSerialize(node.Serialize()));
+Console.WriteLine(((ValueTrainNode<SerializablePredicate<TrainSignal>>)NodeDeSerializer.DeSerialize(node.Serialize()))!.GetValue().AsPredicate(TrainSignal.Simple("CODE")));
 
 
 
