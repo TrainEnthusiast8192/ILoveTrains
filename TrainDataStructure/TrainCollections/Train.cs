@@ -25,8 +25,8 @@ public class Train<T> : TypedTrainCollection<T, IComparable>, IComparable where 
 
     public override bool Equals(object? obj) => obj is ITrainCollection t && t.GetID().Equals(SUUID);
     public override int GetHashCode() => SUUID;
-    protected override ValueTrainNode<T> MakeValueNode(T? value) => MakeValueNode(value);
-    protected override ValueTrainNode<M> MakeValueNode<M>(M? value) where M : default => MakeValueNode<M>(value);
+    protected override ValueTrainNode<T> MakeValueNode(T? value) => new ValueTrainNode<T>(value);
+    protected override ValueTrainNode<M> MakeValueNode<M>(M? value) where M : default => new ValueTrainNode<M>(value);
 
     public override AbstractTrainNode? GetFirst() => first;
 

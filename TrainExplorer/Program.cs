@@ -1,5 +1,5 @@
-﻿SerializablePredicate<string> s = new(o => o.Length < 5);
-var node = new ValueTrainNode<SerializablePredicate<string>>(s);
+﻿SerializablePredicate<TrainSignal> s = new(o =>(bool?)(o.FindCodeGetPayload("TEST")) ?? false);
+var node = new ValueTrainNode<SerializablePredicate<TrainSignal>>(s);
 Console.WriteLine(NodeDeSerializer.DeSerialize(node.Serialize()));
 
 
