@@ -47,13 +47,13 @@ public abstract class TrainItemDeSerializer
 }
 
 #region Exception Types
-#pragma warning disable IDE0290 // Use primary constructor
+#pragma warning disable IDE0290 // Use primary constructor for each of these exception types
 public abstract class TrainDeSerializationException : Exception { public TrainDeSerializationException(string message) : base(message) { } }
 public sealed class TrainDeSerializationInvalidFormatException : TrainDeSerializationException { public TrainDeSerializationInvalidFormatException(string message) : base(message) { } }
 public sealed class TrainDeSerializationInvalidTypeException : TrainDeSerializationException { public TrainDeSerializationInvalidTypeException(string message) : base(message) { } }
-public sealed class TrainDeSerializationAbstractNodeTypeException : TrainDeSerializationException { public TrainDeSerializationAbstractNodeTypeException(string message) : base(message) { } }
+public sealed class TrainDeSerializationAbstractTypeException : TrainDeSerializationException { public TrainDeSerializationAbstractTypeException(string message) : base(message) { } }
 public sealed class TrainDeSerializationNoDeSerializerFoundException : TrainDeSerializationException { public TrainDeSerializationNoDeSerializerFoundException(string message) : base(message) { } }
-public sealed class TrainDeSerializationUnknownNodeTypeException : TrainDeSerializationException { public TrainDeSerializationUnknownNodeTypeException(string message) : base(message) { } }
+public sealed class TrainDeSerializationUnknownTypeException : TrainDeSerializationException { public TrainDeSerializationUnknownTypeException(string message) : base(message) { } }
 public sealed class TrainDeSerializationFinderAttributeIncoherenceException : TrainDeSerializationException { public TrainDeSerializationFinderAttributeIncoherenceException(string message) : base(message) { } }
 #pragma warning restore IDE0290
 #endregion
