@@ -130,18 +130,10 @@ public class ValueTrainNode<T> : AbstractTrainNode where T : IComparable
 
         // Get the parse method, which must be instance and must accept no parameters
         Type typeParameter = value.GetType();
-        MethodInfo? serializeMethod = typeParameter.GetMethod("Serialize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, []);
+        MethodInfo? serializeMethod = typeParameter.GetMethod("Serialize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, [])
+                                        ?? typeParameter.GetMethod("ToString", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, []);
 
-        string? serializedValue = value.ToString();
-
-        if (serializeMethod is not null)
-        {
-            serializedValue = (string?)serializeMethod.Invoke(value, []);
-        }
-        else if (typeof(SerializablePredicate<>).IsAssignableFrom(value.GetType()))
-        {
-            serializedValue = (string)(value?.GetType().GetMethod("ToString", BindingFlags.Instance)?.Invoke(value, []) ?? "");
-        }
+        string? serializedValue = (string?)serializeMethod?.Invoke(value, []);
 
         return $"ValueTrainNode{SERIALIZATION_SEPARATOR}{INTERNAL_CONNECTIONS_GUID}{SERIALIZATION_SEPARATOR}{typeof(T?).AssemblyQualifiedName}{SERIALIZATION_SEPARATOR}{serializedValue}";
     }
